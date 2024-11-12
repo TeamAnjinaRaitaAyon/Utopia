@@ -1,0 +1,26 @@
+{% extends "BasePage.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block more-style %}
+<link rel="stylesheet" href="{% static '/CSS/HomePage.css' %}">
+{% endblock %}
+{% block content %}
+<div class="main">
+    <div class="profile">
+        <div class="user">
+            <div class="main-images">
+                <img id="white" class="white active" src="{{user.UserImageFilename.url}}" alt="image">
+            </div>
+            <div class="shows-details">
+                <span>Name : {{user.UserFullName}}</span>
+                <span>Gender : {{user.UserGender}}</span>
+                <span>Date Of Birth : {{user.UserDateOfBirth}}</span>
+                <span>Balance : BDT {{user.UserPoints}} TK</span>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div>
+</div>
+{% endblock %}

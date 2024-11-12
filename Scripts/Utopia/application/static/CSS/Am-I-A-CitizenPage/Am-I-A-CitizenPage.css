@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@500&family=Montserrat:ital,wght@1,900&family=Ubuntu&display=swap');
+
+
+.firstdiv {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 100px;
+    margin-top: 60px;
+    overflow: hidden; 
+}
+
+.frem {
+    width: 700px;
+    height: fit-content; 
+    background: #ada9a9b9; 
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 12px; 
+    box-shadow: 8px 8px 15px rgba(22, 22, 22, 0.422), -8px -8px 15px rgba(255, 255, 255, 0.916); /* Neumorphic shadow */
+}
+
+/* Neumorphic Style for .words */
+.words {
+    height: 200px;
+    font-size: 50px;
+    font-weight: 900;
+    cursor: pointer;
+    color: rgba(21, 7, 59, 0.938);
+    margin: 10px; 
+}
+
+.frem .text-area {
+    width: 600px;
+    height: 300px;
+    overflow: auto;
+    background: #edeff1; 
+    border-radius: 18px;
+    border: none;
+    outline: none;
+    padding: 12px;
+    color: #484848;
+    font-size: 21px;
+    font-family: sans-serif;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.1), inset -4px -4px 8px rgba(224, 220, 220, 0.6); /* Inset shadow for depth */
+}
+
+
+.text-area:empty::before {
+    content: attr(data-placeholder);
+    color: #7c7c7c;
+    font-family: auto;
+}
+
+.bottom-cont {
+    width: fit-content; 
+    height: fit-content;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.bottom-cont a {
+    display: flex;
+    align-items: center;
+    width: fit-content; 
+    height: fit-content; 
+    padding: 10px;
+    border-radius: 17px;
+    background: #f0f0f3; 
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 8px rgba(255, 255, 255, 0.6); /* Neumorphic shadow */
+}
+.bottom-cont button {
+    border: none;
+    text-decoration: none;
+    background: #15cf3736; /* Slightly transparent background */
+    border-radius: 17px;
+    padding: 10px; /* Added padding for touch target */
+}
+
+/* Neumorphic Style for Specific Link Color */
+.bottom-cont a:nth-child(1) {
+    margin: 20px;
+    color: #15cf37; /* Green color for the first link */
+}
+
+marquee{
+    margin: 10px auto;
+    color: red;
+    font-family: cursive;
+}
+.news{
+    background-color: rgba(235, 231, 231, 0.32);
+    display: flex;
+    font-weight: 900;
+    justify-content: center;
+    text-align: right;
+    align-items: right;
+    font-size: 30px;
+    margin-top: 50px;
+}
+.news p{
+    margin: 10px auto;
+    width: 200px;
+    color: rgb(240, 39, 39);
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+.news a{
+    background-color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+
+.news button{
+    color: rgb(3, 24, 130);
+    font-weight: 700;
+    border: none;
+}
+
+.show {
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 17px;
+    margin: 10px;
+    background-color: #f0f0f3; 
+    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.235), -8px -8px 15px rgba(230, 228, 228, 0.815);
+    padding: 10px;
+    gap: 1px; 
+    width: 80%; 
+}
+.show p {
+    font-weight: 700;
+    font-size: 20px;
+    margin: 10px 0;
+    padding: 10px;
+    color: #333; 
+    word-wrap: break-word;
+    background-color: #f0f0f3; 
+    border-radius: 12px;
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.1), inset -4px -4px 8px rgba(255, 252, 252, 0.733);
+}
+
+.message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 17px;
+    padding: 2px 10px;
+    background: #c3c0c0cb;
+    box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.205), inset -5px -5px 10px rgba(99, 93, 93, 0.6);
+    margin-bottom: 120px;
+}
+

@@ -1,0 +1,73 @@
+body {
+    background-image: url("/static/MEDIA/IMAGE/Background.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: bottom;
+    margin: 0;
+    padding: 20px 40px;
+    margin-right: 0px;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.accordion {
+    margin: 60px auto;
+    width: 600px;
+}
+
+.accordion li {
+    list-style-type: none; /* Changed to none for cleaner look */
+    width: 100%;
+    margin: 20px;
+    padding: 10px;
+    border-radius: 18px; /* Rounded corners */
+    background: #e0e0e0; /* Soft background */
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.15),
+                -8px -8px 20px rgba(255, 255, 255, 0.7); /* Neumorphic shadow */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+.accordion li:hover {
+    background-color: #d5d5d5; /* Darker background on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.accordion li label {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+label::before {
+    content: '+';
+    margin-right: 10px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+.accordion .content {
+    color: #555;
+    padding: 0 10px;
+    line-height: 26px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s, padding 0.5s;
+}
+
+.accordion input[type="radio"]:checked + label + .content {
+    max-height: fit-content;
+    padding: 10px 10px 20px;
+}
+
+.accordion input[type="radio"]:checked + label::before {
+    content: '-';
+}

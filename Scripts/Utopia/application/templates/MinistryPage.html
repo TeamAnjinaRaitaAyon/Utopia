@@ -1,0 +1,73 @@
+{% extends "BasePage.html" %}
+{% load static %}
+{% block title %}Ministry{% endblock %}
+{% block more-style %}
+<link rel="stylesheet" href="{% static '/CSS/MinistryPage.css' %}">
+{% endblock %}
+{% block content %}
+<div class="main">
+    {% if UserID is President %}
+    <div class="ministrysetup">
+        <form action="" method="post">
+            {% csrf_token %}
+            <button type="submit" name="save" value="setup" class="ministrysetuppage">Choose Minister<i
+                    class="fa-solid fa-hand-pointer fa-2xl"></i></button>
+        </form>
+    </div>
+    {% endif %}
+    <div class="profile">
+        {% for minister in MinisterList %}
+        {% for minister_details in MinisterDetails %}
+        {% if minister.MinisterNumberID == minister_details.UserID %}
+        <div class="user" onclick="showDetails('{{ minister.MinisterID }}', '{{ minister.MinisterConstituency }}', '{{ minister_details.UserMobileNum }}', '{{ minister_details.UserEmail }}', '{{ minister_details.UserImageFilename.url }}')">
+            <div class="main-images">
+                <img id="white" class="white active" src="{{ minister_details.UserImageFilename.url }}" alt="image">
+                <span class="minister-name">{{ minister.MinisterID }}</span>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div id="modalDetails">
+            <img id="modalImage" src="" alt="Minister Image" />
+            <h2 id="modalName"></h2>
+            <p id="modalConstituency"></p>
+            <p id="modalContact"></p>
+            <p id="modalEmail"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function showDetails(ministerName, constituency, contact, email, imageUrl) {
+    document.getElementById('modalName').innerText = ministerName;
+    document.getElementById('modalConstituency').innerText = "Constituency: " + constituency;
+    document.getElementById('modalContact').innerText = "Contact No: " + contact;
+    document.getElementById('modalEmail').innerText = "Email: " + email;
+    document.getElementById('modalImage').src = imageUrl; // Set the image in the modal
+
+    // Show the modal
+    document.getElementById('myModal').style.display = "flex";
+}
+
+// Close the modal
+function closeModal() {
+    document.getElementById('myModal').style.display = "none";
+}
+
+// Close the modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('myModal');
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+{% endblock %}

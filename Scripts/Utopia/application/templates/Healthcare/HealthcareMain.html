@@ -1,0 +1,63 @@
+{% extends "BasePage.html" %}
+{% load static %}
+{% block title %}Healthcare{% endblock %}
+
+{% block more-style %}
+<link rel="stylesheet" href="{% static '/CSS/HealthcareMain.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="contents">
+        <div class="container popup" id="PopupHealthcare">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="content">
+                    <div class="input-box">
+                        <label for="HospitalType">Select Hospital Type</label>
+                        <select name="HospitalType" id="HospitalType" data-place-type-url="{% url 'ajax_load_place_types' %}">
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <label for="PlaceType">Select Place Type</label>
+                        <select name="PlaceType" id="PlaceType" data-hospital-url="{% url 'ajax_load_hospitals' %}">
+                            <option selected>Choose a place type</option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <label for="Hospital">Select Hospital</label>
+                        <select name="Hospital" id="Hospital" data-issue-url="{% url 'ajax_load_issues' %}">
+                            <option selected>Choose a hospital</option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <label for="HealthIssue">Select Health Issue</label>
+                        <select name="HealthIssue" id="HealthIssue" data-doctor-url="{% url 'ajax_load_doctors' %}">
+                            <option selected>Choose an issue</option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <label for="Doctor">Select Doctor</label>
+                        <select name="Doctor" id="Doctor">
+                            <option selected>Choose a doctor</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <button type="submit" name="save" value="confirm">Book Appointment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static '/JAVASCRIPT/Healthcare.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}

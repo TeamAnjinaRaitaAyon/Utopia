@@ -1,0 +1,290 @@
+{% extends "BasePage.html" %}
+{% load static %}
+{% block title %}Transportation{% endblock %}
+{% block more-style %}
+<link rel="stylesheet" href="{% static '/CSS/InCity.css' %}">
+{% endblock %}
+{% block content %}
+<div class="main">
+    <!-- Bike Section -->
+    <div class="contents">
+        <a class="Bike" onclick="openPopupBike()">Bike<i class="fa-solid fa-bicycle fa-2xl"></i></a>
+        <div class="container popup" id="PopupBike">
+            <form action="" method="POST" id="indexFormBike" data-Place-url="#"
+                data-Date-url="{% url 'ajax_load_Date' %}" data-Time-url="#"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="content">
+                    <a onclick="closePopupBike()">
+                        <span class="material-icons">
+                            cancel
+                        </span>
+                    </a>
+                    <div class="input-box">
+                        <div class="content"> <label for="BikePlace">Select Place</label></div>
+                        <select name="BikePlace" id="BikePlace">
+                            <option selected>
+                                -------------------------------------------------------------
+                            </option>
+                            {% for i in Places %}
+                            <option value="{{i.id}}">
+                                {{i.name}}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <div class="content"><label for="BikeTime">Select Time</label></div>
+                        <select name="BikeTime" id="BikeTime">
+                            <option selected>
+                                -------------------------------------------------------------
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="button-container">
+                    <button type="submit" name="save" value="confirm">Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Car Section -->
+    <div class="contents">
+        <a class="Car" onclick="openPopupCar()">Car<i class="fa-solid fa-car fa-2xl"></i></a>
+        <div class="container popup" id="PopupCar">
+            <form action="" method="POST" id="indexFormCar" data-Place-url="#"
+                data-Date-url="{% url 'ajax_load_Date' %}" data-Time-url="#"
+                data-CarType-url="#" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="content">
+                    <a onclick="closePopupCar()">
+                        <span class="material-icons">
+                            cancel
+                        </span>
+                    </a>
+                    <div class="input-box">
+                        <div class="content"> <label for="CarPlace">Select Place</label></div>
+                        <select name="CarPlace" id="CarPlace">
+                            <option selected>
+                                -------------------------------------------------------------
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <div class="content"><label for="CarType">Select Car Type</label></div>
+                        <select name="CarType" id="CarType">
+                            <option selected>
+                                -------------------------------------------------------------
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <div class="content"><label for="CarTime">Select Time</label></div>
+                        <select name="CarTime" id="CarTime">
+                            <option selected>
+                                -------------------------------------------------------------
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <div class="content"><label for="CarSeats">Select Seats</label></div>
+                        <select name="CarSeats" id="CarSeats">
+                            <option selected>
+                                -------------------------------------------------------------
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="button-container">
+                    <button type="submit" name="save" value="confirm">Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bus Section -->
+    <div class="contents">
+        <a class="Bus" onclick="openPopupBus()">Bus<i class="fa-solid fa-bus fa-2xl"></i></a>
+        <div class="container popup" id="PopupBus">
+            <form action="" method="POST" id="indexFormBus" data-Place-url="#"
+                data-Date-url="#" data-Time-url="#"
+                data-BusCategory-url="#" data-Seat-url="#"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="content">
+                    <a onclick="closePopupBus()">
+                        <span class="material-icons">
+                            cancel
+                        </span>
+                    </a>
+
+                    <div class="input-box">
+                        <div class="content"><label for="BusPlace">Select Place</label></div>
+                        <select name="BusPlace" id="BusPlace">
+                            <option selected>
+                                -------------------------------------------------------------
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <div class="content"><label for="BusTime">Select Time</label></div>
+                        <select name="BusTime" id="BusTime">
+                            <option selected>
+                                -------------------------------------------------------------
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <div class="content"><label for="BusCategory">Select Bus Category</label></div>
+                        <select name="BusCategory" id="BusCategory">
+                            <option selected>
+                                -------------------------------------------------------------
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <div class="content"><label for="BusSeats">Select Number of Seats</label></div>
+                        <select name="BusSeats" id="BusSeats">
+                            <option selected>
+                                -------------------------------------------------------------
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="button-container">
+                    <button type="submit" name="save" value="confirm">Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static '/JAVASCRIPT/Transportation.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script>
+        // Bike AJAX
+        $("#BikePlace").change(function () {
+            var url = $("#indexFormBike").attr("data-Place-url");
+            var selectedPlace = $(this).val();
+
+            $.ajax({
+                url: url,
+                data: {
+                    "Place": selectedPlace,
+                },
+                success: function (data) {
+                    $("#BikeTime").html(data);
+                }
+            });
+        });
+
+        // Car AJAX
+        $("#CarPlace").change(function () {
+            var url = $("#indexFormCar").attr("data-Place-url");
+            var selectedPlace = $(this).val();
+
+            $.ajax({
+                url: url,
+                data: {
+                    "Place": selectedPlace,
+                },
+                success: function (data) {
+                    $("#CarType").html(data);
+                }
+            });
+        });
+
+        $("#CarType").change(function () {
+            var url = $("#indexFormCar").attr("data-Time-url");
+            var selectedCarType = $(this).val();
+            var selectedPlace = $("#CarPlace").val();
+
+            $.ajax({
+                url: url,
+                data: {
+                    "Place": selectedPlace,
+                    "CarType": selectedCarType,
+                },
+                success: function (data) {
+                    $("#CarTime").html(data);
+                }
+            });
+        });
+
+        $("#CarTime").change(function () {
+            var url = $("#indexFormCar").attr("data-Seat-url");
+            var selectedCarTime = $(this).val();
+
+            $.ajax({
+                url: url,
+                data: {
+                    "CarTime": selectedCarTime,
+                },
+                success: function (data) {
+                    $("#CarSeats").html(data);
+                }
+            });
+        });
+
+        // Bus AJAX
+        $("#BusPlace").change(function () {
+            var url = $("#indexFormBus").attr("data-Place-url");
+            var selectedPlace = $(this).val();
+
+            $.ajax({
+                url: url,
+                data: {
+                    "Place": selectedPlace,
+                },
+                success: function (data) {
+                    $("#BusTime").html(data);
+                }
+            });
+        });
+
+        $("#BusTime").change(function () {
+            var url = $("#indexFormBus").attr("data-BusCategory-url");
+            var selectedBusTime = $(this).val();
+            var selectedPlace = $("#BusPlace").val();
+
+            $.ajax({
+                url: url,
+                data: {
+                    "Place": selectedPlace,
+                    "BusTime": selectedBusTime,
+                },
+                success: function (data) {
+                    $("#BusCategory").html(data);
+                }
+            });
+        });
+
+        $("#BusCategory").change(function () {
+            var url = $("#indexFormBus").attr("data-Seat-url");
+            var selectedBusCategory = $(this).val();
+
+            $.ajax({
+                url: url,
+                data: {
+                    "BusCategory": selectedBusCategory,
+                },
+                success: function (data) {
+                    $("#BusSeats").html(data);
+                }
+            });
+        });
+    </script>
+</div>
+{% endblock %}
+

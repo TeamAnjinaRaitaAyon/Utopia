@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcomepage</title>
+    <link rel="stylesheet" href="{% static '/CSS/WelcomePage.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <img src="static/MEDIA/IMAGE/utopialogo.png" alt="Logo" class="logo">
+            <div class ="right-nav">
+            <ul>
+                <li><a href="{% url 'ServicePage' %}">Services</a></li>
+                <li><a href="{% url 'NewsDetailsPage' %}">News & Events</a></li>
+                <li><a href="{% url 'AboutPage' %}">About Us</a></li>
+                <li><a href="{% url 'ContactPage' %}">Contact</a></li>
+                <li><a href="{% url 'HelpPage' %}">Help</a></li>
+            </ul>
+            <a href="EntryPage">
+                <button => register now</button>
+            </a>
+        </nav>
+    </header>
+    
+    <main>
+        <section>
+            <h1>Welcome to UTOPIA<br>the Citizen Portal of<br>BANGLADESH</h1>
+            <p>Your Smart Journey Starts Here</p>
+            <div class ="btns">
+                <p1>Already have an account?</p1>
+                <a href="EntryPage">
+                    <button>LogIN Now</button>
+                </a>
+            </div>
+        </section>
+        <section>
+            <img class="branching" src="/static/MEDIA/IMAGE/Home.png" atl="">
+            <span>
+                <a href="">
+                    <img src="/static/MEDIA/IMAGE/puzzle.png" alt="">
+                </a>
+            </span>
+            <span>
+                <a href="">
+                    <img src="/static/MEDIA/IMAGE/infrastructure.png" alt="">
+                </a>
+            </span>
+            <span>
+                <a href="">
+                    <img src="/static/MEDIA/IMAGE/voting-box.png" alt="">
+                </a>
+            </span>
+            <span>
+                <a href="">
+                    <img src="/static/MEDIA/IMAGE/healthcare.png" alt="">
+                </a>
+            </span>            
+        </section>
+    </main>
+</body>
+</html>

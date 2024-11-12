@@ -1,0 +1,54 @@
+.contact {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    height: fit-content;
+    padding: 20px;
+}
+
+.one,
+.two,
+.three {
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    max-width: fit-content;
+    max-height: 500px;
+    font-size: 30px;
+    font-weight: 500;
+    word-wrap: break-word;
+    cursor: pointer;
+    width: 100%;
+    margin: 30px;
+    border-radius: 18px;
+    padding: 30px;
+    background-color: #e0e0e0; /* Soft background */
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.15), /* Neumorphic shadow */
+                -8px -8px 20px rgba(255, 255, 255, 0.7); /* Neumorphic shadow */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+.one:hover,
+.two:hover,
+.three:hover {
+    transform: translateY(-2px); /* Lift effect on hover */
+    background-color: #d5d5d5; /* Slightly darker on hover */
+}
+
+.one::before,
+.two::before,
+.three::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border-radius: 18px;
+    background: #e0e0e0; /* Match background */
+    z-index: -1;
+    box-shadow: inset -5px -5px 10px rgba(255, 255, 255, 0.5), /* Inner light shadow */
+                inset 5px 5px 10px rgba(0, 0, 0, 0.2); /* Inner dark shadow */
+}
+

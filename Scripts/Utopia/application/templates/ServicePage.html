@@ -1,0 +1,19 @@
+{% extends "BasePage.html" %}
+{% load static %}
+{% block title %}Services{% endblock %}
+{% block more-style %}
+<link rel="stylesheet" href="{% static '/CSS/ServicePage.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Our Services</h1>
+<div class="icons">
+    <a href="{% url 'VotingPage' %}" class="Voting"><i class="fas fa-vote-yea"></i> Voting</a>
+    <a href="{% url 'MinistryPage' %}" class="Governance"><i class="fas fa-landmark"></i> Governance</a>
+    <a href="{% url 'TransportationMain' %}" class="Transportation"><i class="fas fa-bus"></i> Transportation</a>
+    <a href="{% url 'HealthcareMain' %}" class="Healthcare"><i class="fas fa-heartbeat"></i> Healthcare</a>
+    <a href="{% url 'EducationPage' %}" class="Education"><i class="fas fa-book"></i> Education</a>
+    <a href="{% url 'EntertainmentPage' %}" class="Entertainment"><i class="fas fa-film"></i> Entertainment</a>
+    <a href="{% url 'Am_I_A_CitizenPage' %}" class="Thoughts"><i class="fas fa-brain"></i> Thoughts</a>
+</div>
+{% endblock %}

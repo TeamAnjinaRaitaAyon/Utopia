@@ -1,0 +1,94 @@
+/* Neumorphism Base Styles */
+body {
+    background-color: #e0e0e0; /* Light gray background */
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height */
+}
+
+.contents {
+    position: relative;
+    width: 90%;
+    max-width: 600px; /* Max width for the popup */
+    background-color: #ffffff; /* White background for popup */
+    border-radius: 20px; /* Rounded corners */
+    box-shadow: 8px 8px 20px rgba(150, 150, 150, 0.2), -8px -8px 20px rgba(255, 255, 255, 0.9); /* Neumorphic shadow */
+    padding: 20px;
+    transition: transform 0.3s ease; /* Smooth transform on hover */
+}
+
+.contents:hover {
+    transform: scale(1.02); /* Slightly enlarge on hover */
+}
+
+.popup {
+    display: flex; /* Display flex for centering */
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch; /* Stretch to fit contents */
+}
+
+.input-box {
+    margin-bottom: 15px; /* Space between inputs */
+}
+
+.input-box label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold; /* Bold labels */
+}
+
+.input-box select {
+    width: 100%; /* Full width for select */
+    padding: 10px;
+    border: none;
+    border-radius: 10px; /* Rounded corners for select */
+    background-color: #f0f0f0; /* Light background for select */
+    box-shadow: inset 5px 5px 10px rgba(150, 150, 150, 0.2), inset -5px -5px 10px rgba(255, 255, 255, 0.9); /* Neumorphic effect */
+    transition: background-color 0.3s ease; /* Smooth background change */
+}
+
+.input-box select:focus {
+    background-color: #ffffff; /* Change background on focus */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Shadow on focus */
+}
+
+.button-container {
+    text-align: center; /* Center the button */
+}
+
+.button-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px; /* Rounded button */
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 5px 5px 10px rgba(150, 150, 150, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.9); /* Neumorphic button shadow */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+.button-container button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+}
+
+.material-icons {
+    cursor: pointer; /* Change cursor for the cancel icon */
+    color: #c62c2c; /* Red color for cancel icon */
+    font-size: 24px; /* Size of the cancel icon */
+    float: right; /* Align right */
+}
+
+.content {
+    position: relative; /* Relative positioning for the cancel button */
+    padding: 15px;
+}

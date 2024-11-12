@@ -1,0 +1,21 @@
+{% extends "BasePage.html" %}
+{% load static %}
+{% block title %}Tickets{% endblock %}
+{% block more-style %}
+
+<link rel="stylesheet" href="{% static '/CSS/TicketPage/Ticket.css' %}">
+{% endblock %}
+{% block content %}
+{% for Ticket in Tickets %}
+<div class="show-details">
+    <h1>Thank You . Your Transportation Ticket</h1>
+    <p><strong>Transport Type:</strong> {{ Ticket.TransportType.name }}</p>
+    <p><strong>Place:</strong> {{ Ticket.Place.name }}</p>
+    <p><strong>Date:</strong> {{ Ticket.Date.date }}</p>
+    <p><strong>Seat Type:</strong> {{ Ticket.SeatType.name }}</p>
+    <p><strong>Seat Number:</strong> {{ Ticket.SeatNumber }}</p>
+    <p><strong>Price:</strong> ${{ Ticket.TicketPrice }}</p>
+    <p><strong>User:</strong> {{ Ticket.UserID }}</p>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "BasePage.html" %}
+{% load static %}
+{% block title %}Contact{% endblock %}
+{% block more-style %}
+<link rel="stylesheet" href="{% static '/CSS/ContactPage.css' %}">
+{% endblock %}
+{% block content %}
+<div class="contact">
+    <div class="one">
+        <div class="main-images">
+            <img id="white" class="white active" src="{% static '/MEDIA/IMAGE/avatar.jpg' %}" alt="image">
+        </div>
+        <span>Anjina Islam Anni</span><br>
+        <span>21101010@uap-bd.edu</span><br>
+    </div>
+    <div class="two">
+        <div class="main-images">
+            <img id="white" class="white active" src="{% static '/MEDIA/IMAGE/avatar.jpg' %}" alt="image">
+        </div>
+        <span>Ayon Ghosh</span><br>
+        <span>21101032@uap-bd.edu</span><br>
+    </div>
+    <div class="three">
+        <div class="main-images">
+            <img id="white" class="white active" src="{% static '/MEDIA/IMAGE/avatar.jpg' %}" alt="image">
+        </div>
+        <span>Raita Sikder Fareha</span><br>
+        <span>21101023@uap-bd.edu</span><br>
+    </div>
+</div>
+{% endblock %}
