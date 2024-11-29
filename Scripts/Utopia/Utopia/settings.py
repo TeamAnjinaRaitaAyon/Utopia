@@ -161,5 +161,3 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 LOGIN_URL='/EntryPage/'
-
-

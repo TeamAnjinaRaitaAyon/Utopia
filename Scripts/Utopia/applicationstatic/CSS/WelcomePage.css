@@ -1,0 +1,160 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+body {
+    background-image: url("/static/MEDIA/IMAGE/Background.jpg");
+    background-size: cover ;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: bottom;
+    margin: 0;
+    padding:  20px 40px;
+    margin-right: 0px;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color:transparent;
+    box-shadow: -5px -5px 10px #fff, 5px 5px 10px #c3c5cc;
+    border-radius: 50px;
+    border:1px solid white;
+    padding:25px 80px;
+}
+ 
+.logo{
+    width: 60px; 
+    height: 60px; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    background: transparent;
+}
+
+.right-nav,ul{
+    display:flex;
+    align-items: center;
+    gap:30px;
+    list-style:none;
+}
+
+ul li a{
+    text-decoration: none;
+    color: black;
+    font-size:15px;
+    letter-spacing: .3px;
+    font-weight: bold;
+}
+
+h1{
+    font-size: 60px;
+}
+p{
+    font-size: 25px;
+}
+.p1{
+    font-size: 5px;
+}
+
+.right-nav button {
+    padding: 10px 30px;
+    box-shadow: -5px -5px 10px #fff, 5px 5px 10px #9a9ca3;
+    border: none;
+    background-color: rgb(3, 120, 147);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-size: 11px;
+    font-weight: bolder;
+    border-radius: 50px;
+    cursor: pointer;
+}
+.btns button{
+    padding: 10px 15px;
+    border: none;
+    background-color: rgb(179, 0, 0);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-size: 11px;
+    font-weight: bolder;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.active{
+    padding: 7px 10px;
+    box-shadow: inset -3px -3px 10px #fff, inset 3px 3px 10px #9a9ca3;
+    border-radius: 50px;
+}
+
+main{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+main section{
+    width: 580px;
+    margin-top: 150px;
+}
+
+.btns{
+    display: flex;
+    align-items: center;
+    gap:25px;
+}
+
+.btns button:last-child{
+    background-attachment: transparent;
+    border: 1px solid white;
+    color: black;
+}
+.branching{ /*pic*/
+    position: absolute;
+    width:700px;
+    top:-40px;
+    right:-260px;
+
+}
+
+main section span img{
+    width:40px;
+}
+main section span{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    height: 80px;
+    width: 80px;
+    border:1px solid white;
+    z-index:10;
+    box-shadow: -5px -5px 10px #fff, 5px 5px 10px #c3c5cc;
+    background: rgb(206, 205, 205);
+    border-radius: 50px;
+    border:1px solid white;
+    cursor: pointer;
+}
+section span:nth-of-type(1){
+    top:100px;
+    right: 250px;
+}
+section span:nth-of-type(2){
+    top:230px;
+    right: 330px;
+}
+section span:nth-of-type(3){
+    top:375px;
+    right: 330px;
+}
+section span:nth-of-type(4){
+    top:510px;
+    right: 225px;
+}

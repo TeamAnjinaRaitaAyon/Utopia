@@ -20,8 +20,6 @@ from django.contrib import messages
 from django.db.models import Q
 from .forms import *
 from application.models import *
-from .models import Collegee
-from .models import Appointment
 from django.contrib.auth.decorators import login_required
 from itertools import chain
 import os
@@ -328,318 +326,65 @@ def MinistrySetupPage(request):
     context.update({'MinistryList': MinistriesList})
     return render(request, 'MinistrySetupPage.html', context)
 
-
+#transportation
 @login_required(login_url='EntryPage')
 def TransportationMain(request):
     return render(request, 'Transportation/TransportationMain.html')
 
-
-def homebus(request):
-    if request.user.is_authenticated:
-        return render(request, 'Transportation/Bus/homebus.html')
-    else:
-        return render(request, 'Transportation/Bus/signin.html')
-
-
-def findbus(request):
+@login_required(login_url='EntryPage')
+def InCity(request):
+    CityList = City.objects.all()
     context = {}
-    if request.method == 'POST':
-        source_r = request.POST.get('source')
-        dest_r = request.POST.get('destination')
-        date_r = request.POST.get('date')
-        bus_list = Bus.objects.filter(
-            source=source_r, dest=dest_r, date=date_r)
-        if bus_list:
-            return render(request, 'Transportation/Bus/list.html', locals())
-        else:
-            context["error"] = "Sorry no buses available"
-            return render(request, 'Transportation/Bus/findbus.html', context)
-    else:
-        return render(request, 'Transportation/Bus/findbus.html')
-
-
-def bookings(request):
-    context = {}
-    if request.method == 'POST':
-        id_r = request.POST.get('bus_id')
-        seats_r = int(request.POST.get('no_seats'))
-        bus = Bus.objects.get(id=id_r)  # Corrected the field name to 'id'
-        if bus:
-            if bus.rem > int(seats_r):
-                name_r = bus.bus_name
-                cost = int(seats_r) * bus.price
-                source_r = bus.source
-                dest_r = bus.dest
-                nos_r = (bus.nos)
-                price_r = bus.price
-                date_r = bus.date
-                time_r = bus.time
-                username_r = request.user.username
-                email_r = request.user.email
-                userid_r = request.user.id
-                rem_r = bus.rem - seats_r
-                Bus.objects.filter(id=id_r).update(rem=rem_r)
-                book = Book.objects.create(name=username_r, email=email_r, bus_name=name_r, source=source_r,
-                                           dest=dest_r, price=price_r, nos=seats_r, date=date_r, time=time_r,
-                                           status='BOOKED')
-                print('------------book id-----------', book.id)
-                # book.save()
-                return render(request, 'Transportation/Bus/bookings.html', locals())
-            else:
-                context["error"] = "Sorry, select fewer number of seats"
-                return render(request, 'Transportation/Bus/findbus.html', context)
-
-    else:
-        return render(request, 'Transportation/Bus/findbus.html')
-
-
-def cancellings(request):
-    context = {}
-    if request.method == 'POST':
-        id_r = request.POST.get('bus_id')
-        # seats_r = int(request.POST.get('no_seats'))
-
-        try:
-            book = Book.objects.get(id=id_r)
-            bus = Bus.objects.get(id=book.busid)
-            rem_r = bus.rem + book.nos
-            Bus.objects.filter(id=book.busid).update(rem=rem_r)
-            # nos_r = book.nos - seats_r
-            Book.objects.filter(id=id_r).update(status='CANCELLED')
-            Book.objects.filter(id=id_r).update(nos=0)
-            return redirect(seebookings)
-        except Book.DoesNotExist:
-            context["error"] = "Sorry You have not booked that bus"
-            return render(request, 'Transportation/Bus/error.html', context)
-    else:
-        return render(request, 'Transportation/Bus/findbus.html')
-
-
-def seebookings(request, new={}):
-    context = {}
-    id_r = request.user.id
-    book_list = Book.objects.filter(id=id_r)
-    if book_list:
-        return render(request, 'Transportation/Bus/booklist.html', locals())
-    else:
-        context["error"] = "Sorry no buses booked"
-        return render(request, 'Transportation/Bus/findbus.html', context)
-
-
-def hometrain(request):
-    if request.user.is_authenticated:
-        return render(request, 'Transportation/Train/hometrain.html')
-    else:
-        return render(request, 'Transportatio/Train/signin.html')
-
-
-def find_train(request):
-    context = {}
-    if request.method == 'POST':
-        source_r = request.POST.get('source')
-        dest_r = request.POST.get('destination')
-        date_r = request.POST.get('date')
-        train_list = Train.objects.filter(
-            source=source_r, dest=dest_r, date=date_r)
-        if train_list:
-            return render(request, 'Transportation/Train/list.html', locals())
-        else:
-            context["error"] = "Sorry no train available"
-            return render(request, 'Transportation/Train/findtrain.html', context)
-    else:
-        return render(request, 'Transportation/Train/findtrain.html')
-
-
-def booking(request):
-    context = {}
-    if request.method == 'POST':
-        id_r = request.POST.get('train_id')
-        seats_r = int(request.POST.get('no_seats'))
-        train = Train.objects.get(id=id_r)
-        if train:
-            if train.rem > int(seats_r):
-                name_r = train.train_name
-                cost = int(seats_r) * train.price
-                source_r = train.source
-                dest_r = train.dest
-                nos_r = train.nos
-                price_r = train.price
-                date_r = train.date
-                time_r = train.time
-                username_r = request.user.username
-                email_r = request.user.email
-                userid_r = request.user.id
-                rem_r = train.rem - seats_r
-                Train.objects.filter(id=id_r).update(rem=rem_r)
-                book = BookTrain.objects.create(name=username_r, email=email_r, train_name=name_r, source=source_r,
-                                                dest=dest_r, price=price_r, nos=seats_r, date=date_r, time=time_r,
-                                                status='BOOKED')
-                print('------------book id-----------', book.id)
-                # book.save()
-                return render(request, 'Transportation/Train/bookings.html', locals())
-            else:
-                context["error"] = "Sorry, select fewer number of seats"
-                return render(request, 'Transportation/Train/findtrain.html', context)
-
-    else:
-        return render(request, 'Transportation/Train/findtrain.html')
-
-
-def cancelling(request):
-    context = {}
-    if request.method == 'POST':
-        id_r = request.POST.get('train_id')
-        # seats_r = int(request.POST.get('no_seats'))
-
-        try:
-            book = BookTrain.objects.get(id=id_r)
-            train = Train.objects.get(id=book.trainid)
-            rem_r = train.rem + book.nos
-            Train.objects.filter(id=book.trainid).update(rem=rem_r)
-            # nos_r = book.nos - seats_r
-            BookTrain.objects.filter(id=id_r).update(status='CANCELLED')
-            BookTrain.objects.filter(id=id_r).update(nos=0)
-            return redirect(seebookings)
-        except BookTrain.DoesNotExist:
-            context["error"] = "Sorry You have not booked that train"
-            return render(request, 'Transportation/Train/error.html', context)
-    else:
-        return render(request, 'Transportation/Train/findtrain.html')
-
-
-def seebooking(request, new={}):
-    context = {}
-    id_r = request.user.id
-    book_list = BookTrain.objects.filter(id=id_r)
-    if book_list:
-        return render(request, 'Transportation/Train/booklist.html', locals())
-    else:
-        context["error"] = "Sorry no train booked"
-        return render(request, 'Transportation/Train/findTrain.html', context)
-
-
-def homeplane(request):
-    if request.user.is_authenticated:
-        return render(request, 'Transportation/Plane/homeplane.html')
-    else:
-        return render(request, 'Transportation/Plane/signin.html')
-
-
-def find_plane(request):
-    context = {}
-    if request.method == 'POST':
-        source_r = request.POST.get('source')
-        dest_r = request.POST.get('destination')
-        date_r = request.POST.get('date')
-        plane_list = Plane.objects.filter(
-            source=source_r, dest=dest_r, date=date_r)
-        if plane_list:
-            return render(request, 'Transportation/Plane/list.html', locals())
-        else:
-            context["error"] = "Sorry no plane available"
-            return render(request, 'Transportation/Plane/findplane.html', context)
-    else:
-        return render(request, 'Transportation/Plane/findplane.html')
-
-
-def bookingp(request):
-    context = {}
-    if request.method == 'POST':
-        id_r = request.POST.get('plane_id')
-        seats_r = int(request.POST.get('no_seats'))
-        plane = Plane.objects.get(id=id_r)
-        if plane:
-            if plane.rem > int(seats_r):
-                name_r = plane.plane_name
-                cost = int(seats_r) * plane.price
-                source_r = plane.source
-                dest_r = plane.dest
-                nos_r = plane.nos
-                price_r = plane.price
-                date_r = plane.date
-                time_r = plane.time
-                username_r = request.user.username
-                email_r = request.user.email
-                userid_r = request.user.id
-                rem_r = plane.rem - seats_r
-                Plane.objects.filter(id=id_r).update(rem=rem_r)
-                book = BookPlane.objects.create(name=username_r, email=email_r, plane_name=name_r, source=source_r,
-                                                dest=dest_r, price=price_r, nos=seats_r, date=date_r, time=time_r,
-                                                status='BOOKED')
-                print('------------book id-----------', book.id)
-                # book.save()
-                return render(request, 'Transportation/Plane/bookings.html', locals())
-            else:
-                context["error"] = "Sorry, select fewer number of seats"
-                return render(request, 'Transportation/Plane/findplane.html', context)
-
-    else:
-        return render(request, 'Transportation/Plane/findplane.html')
-
-
-def cancellingp(request):
-    context = {}
-    if request.method == 'POST':
-        id_r = request.POST.get('plane_id')
-        # seats_r = int(request.POST.get('no_seats'))
-
-        try:
-            book = BookPlane.objects.get(id=id_r)
-            plane = Plane.objects.get(id=book.planeid)
-            rem_r = plane.rem + book.nos
-            Plane.objects.filter(id=book.planeid).update(rem=rem_r)
-            # nos_r = book.nos - seats_r
-            BookPlane.objects.filter(id=id_r).update(status='CANCELLED')
-            BookPlane.objects.filter(id=id_r).update(nos=0)
-            return redirect(seebookings)
-        except BookPlane.DoesNotExist:
-            context["error"] = "Sorry You have not booked that plane"
-            return render(request, 'Transportation/Plane/error.html', context)
-    else:
-        return render(request, 'Transportation/Plane/findplane.html')
-
-
-def seebookingp(request, new={}):
-    context = {}
-    id_r = request.user.id
-    book_list = BookPlane.objects.filter(id=id_r)
-    if book_list:
-        return render(request, 'Transportation/Plane/booklist.html', locals())
-    else:
-        context["error"] = "Sorry no plane booked"
-        return render(request, 'Transportation/Plane/findplane.html', context)
-
+    context.update({"CityList": CityList})
+    return render(request, 'Transportation/InCity.html',context)
 
 @login_required(login_url='EntryPage')
-def HealthcareMain(request):
-    return render(request, "Healthcare/HealthcareMain.html")
-from django.http import JsonResponse
-from .models import Hospital, Doctor
+def CityToCity(request):
+    return render(request, 'Transportation/CityToCity.html')
 
-def load_place_types(request):
-    hospital_type = request.GET.get('HospitalType')
-    # Replace with actual place types based on HospitalType
-    place_types = [{"name": "Hospital", "id": 1}, {"name": "Diagnostic Center", "id": 2}]
-    return JsonResponse({"place_types": place_types})
-
-def load_hospitals(request):
-    place_type = request.GET.get('PlaceType')
-    # Replace with actual queryset
-    hospitals = [{"name": "City Hospital", "id": 1}, {"name": "Health Clinic", "id": 2}]
-    return JsonResponse({"hospitals": hospitals})
-
-def load_issues(request):
-    hospital_id = request.GET.get('Hospital')
-    # Replace with actual issues for that hospital
-    issues = [{"name": "Cardiology", "id": 1}, {"name": "Orthopedics", "id": 2}]
-    return JsonResponse({"issues": issues})
-
-def load_doctors(request):
-    issue_id = request.GET.get('HealthIssue')
-    doctors = Doctor.objects.filter(issue_id=issue_id, is_available=True).values('id', 'name')
-    return JsonResponse({"doctors": list(doctors)})
+@login_required(login_url='EntryPage')
+def CountryToCountry(request):
+    return render(request, 'Transportation/CountryToCountry.html')
 
 
+def get_Location(request):
+    city = request.GET.get('city')
+    request.session['city']=city
+    locations = Neighborhood.objects.filter(
+        city=city
+    )  
+    location_data= [
+        {"name": location.name,'id':location.id}
+        for location in locations
+    ]
+
+    return JsonResponse({"location":location_data})
+
+
+def get_Destination(request):
+    location = request.GET.get('location')
+    if location is not None:
+        try:
+            location = int(location)  # Ensure location is an integer
+        except ValueError:
+            return JsonResponse({"error": "Invalid location ID"}, status=400)
+    
+    city = request.session.get('city', [])
+    print(location, city)
+    
+    destinations = Neighborhood.objects.filter(city=city)
+    print(destinations)
+    
+    destination_data = [
+        {"name": destination.name, 'id': destination.id}
+        for destination in destinations if destination.id != location
+    ]
+    
+    print(f"this is {destination_data}")
+    return JsonResponse({"destination": destination_data})
+
+def get_Price(request):
+    return 
 def Clinic(request):
     return render(request, "Healthcare/Category.html/Clinic.html")
 
@@ -712,73 +457,6 @@ def EyeclinicAppointmentPage(request):
     return render(request, "Healthcare/Eyeclinic.html/EyeclinicAppointmentPage.html")
 
 
-def book_clinicappointment(request):
-    if request.method == 'POST':
-        form = AppointmentForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('ThankYou')
-
-    else:
-        form = AppointmentForm()
-
-    return render(request, 'Healthcare/Clinic.html/ClinicAppointmentPage.html', {'form': form})
-
-
-def book_diagappointment(request):
-    if request.method == 'POST':
-        diaform = AppointmentForm(request.POST, request.FILES)
-        if diaform.is_valid():
-            diaform.save()
-            return redirect('success')
-    else:
-        diaform = AppointmentForm()
-
-    context = {
-        'diaform': diaform,
-    }
-    return render(request, 'Healthcare/Diagnostic.html/DiagnosticAppointmentPage.html', context)
-
-
-def book_hospitalappointment(request):
-    if request.method == 'POST':
-        hosform = AppointmentForm(request.POST)
-        if hosform.is_valid():
-            hosform.save()
-            return redirect('ThankYou')
-
-    else:
-        hosform = AppointmentForm()
-
-    return render(request, 'Healthcare/Hospital.html/HospitalAppointmentPage.html', {'hosform': hosform})
-
-
-def book_pharmacyappointment(request):
-    if request.method == 'POST':
-        form = AppointmentForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('ThankYou')
-
-    else:
-        form = AppointmentForm()
-
-    return render(request, 'Healthcare/Pharmacy.html/PharmacyBookingPage.html', {'form': form})
-
-
-def book_eyeappointment(request):
-    if request.method == 'POST':
-        form = AppointmentForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('ThankYou')
-
-    else:
-        form = AppointmentForm()
-
-    return render(request, 'Healthcare/Eyeclinic.html/EyeclinicAppointmentPage.html', {'form': form})
-
-
 def ThankYou(request):
     return render(request, 'Healthcare/ThankYou.html')
 
@@ -787,69 +465,6 @@ def ThankYou(request):
 def EducationPage(request):
     return render(request, 'EducationPage.html')
 
-
-def College(request):
-    colleges = Collegee.objects.all()
-    return render(request, 'Education/College.html', {'colleges': colleges})
-
-
-def Honours(request):
-    honours = Honourss.objects.all()
-    return render(request, 'Education/Honours.html', {'honours': honours})
-
-
-def Masters(request):
-    masters = Masterss.objects.all()
-    return render(request, 'Education/Masters.html', {'masters': masters})
-
-
-def Form(request):
-    return render(request, 'Education/Form.html')
-
-
-def Collegeapply(request):
-    if request.method == 'POST':
-        collegeform = CollegeApplicantForm(request.POST, request.FILES)
-        if collegeform.is_valid():
-            collegeform.save()
-            return redirect('success')
-    else:
-        collegeform = CollegeApplicantForm()
-
-    context = {
-        'collegeform': collegeform,
-    }
-    return render(request, 'Education/Collegeapply.html', context)
-
-
-def Mastersapply(request):
-    if request.method == 'POST':
-        mastersform = MastersApplicantForm(request.POST, request.FILES)
-        if mastersform.is_valid():
-            mastersform.save()
-            return redirect('success')
-    else:
-        mastersform = MastersApplicantForm()
-
-    context = {
-        'mastersform': mastersform,
-    }
-    return render(request, 'Education/Mastersapply.html', context)
-
-
-def Honoursapply(request):
-    if request.method == 'POST':
-        honoursform = HonoursApplicantForm(request.POST, request.FILES)
-        if honoursform.is_valid():
-            honoursform.save()
-            return redirect('success')
-    else:
-        honoursform = HonoursApplicantForm()
-
-    context = {
-        'honoursform': honoursform,
-    }
-    return render(request, 'Education/Honoursapply.html', context)
 
 
 def success(request):
@@ -936,77 +551,85 @@ def SportTicket(request):
 
 # sports finish
 
+#HealthCare Start 
+from .models import HealthIssue
+@login_required(login_url='EntryPage')
+def HealthcareMain(request):
+    health_issues = HealthIssue.objects.all()
+    return render(request, 'Healthcare/HealthcareMain.html', {'health_issues': health_issues})
+from django.http import JsonResponse
+from .models import HealthIssue, Hospital, Doctor
+
+def get_hospitals(request):
+    health_issue_id = request.GET.get('health_issue')
+    hospital_type = request.GET.get('hospital_type')
+    print(f'this is {health_issue_id,hospital_type}')
+
+    hospitals = Hospital.objects.filter(
+        issues__id=health_issue_id, type=hospital_type
+    )
+
+    hospital_data = [
+        {"id": hospital.id, "name": hospital.name}
+        for hospital in hospitals
+    ]
+    
+    return JsonResponse({"hospitals": hospital_data})
+
+from django.http import JsonResponse
+from .models import HealthIssue, Hospital, Doctor
+
+from django.http import JsonResponse
+from .models import Doctor
+
+def get_doctors(request):
+    # Get health_issue_id and hospital_id from the GET request
+    health_issue_id = request.GET.get('health_issue')
+    hospital_id = request.GET.get('hospital')
+    
+    # Print for debugging
+    print(f"Health Issue ID: {health_issue_id}, Hospital ID: {hospital_id}")
+
+    # Fetch doctors who are associated with the selected hospital and health issue
+    doctors = Doctor.objects.filter(
+        hospitals__id=hospital_id,  # Filter by hospital
+        health_issue__id=health_issue_id  # Filter by health issue
+    )
+
+    # Prepare a list of doctor names and ids to return as JSON
+    doctor_data = [
+        {"id": doctor.id, "name": doctor.name}  # Send doctor ID and name
+        for doctor in doctors
+    ]
+    print(doctor_data)
+    # Return a JSON response containing the doctor data
+    return JsonResponse({"doctors": doctor_data})
+
+from django.http import JsonResponse
+from .models import Doctor
+
+from django.http import JsonResponse
+from .models import Doctor
+
+def get_visiting_hours(request):
+    doctor_id = request.GET.get('doctor')
+
+    # Get the doctor object by ID
+    doctor = Doctor.objects.get(id=doctor_id)
+
+    # Format the visiting hours in a human-readable way
+    formatted_visiting_hours = []
+    for entry in doctor.visiting_hours:
+        day = entry.get("day", "Unknown Day")
+        hours = entry.get("hours", "No Hours Available")
+        formatted_visiting_hours.append(f"{day}: {hours}")
+
+    # Return the formatted visiting hours in the response
+    return JsonResponse({"visiting_hours": formatted_visiting_hours})
 
 
-@login_required
-def InCity(request):
-    if request.method == "POST":
-        nameu = request.POST.get('save')
-        TransportType = request.POST.get('Transport')
-        TransportType = Transport.objects.get(id=TransportType)
-        Place = request.POST.get('TransportPlace')
-        Place = TransportPlace.objects.get(id=Place)
-        Date = request.POST.get('TransportDate')
-        Date = TransportDate.objects.get(id=Date)
-        Date = str(Date)
-        SeatType = request.POST.get('TransportSeatType')
-        SeatType = TransportSeatType.objects.get(id=SeatType)
-        SeatType = str(SeatType)
-        TicketPrice = get_number_from_string(SeatType)
-        TicketPrice = int(TicketPrice)
-        SeatType = SeatType.split("(")[0]
-        UserID = request.user.username
-        UserMoney = UsersPrimaryDetails.objects.get(UserID=UserID)
-        parts = Date.split("-")
-        month, day = parts[1], parts[2]
-        month_name = calendar.month_name[int(month)]
-        DM = f"{month_name} {day}TH"
-        Year = Date.split("-")[0]
-        pattern = r"\d{4}-\d{2}-\d{2}"
-        match = re.search(pattern, Date)
-        year, month, day = int(match.group(0)[:4]), int(
-            match.group(0)[5:7]), int(match.group(0)[8:])
-        DayName = calendar.day_name[calendar.weekday(year, month, day)]
-        text = str(Place)
-        parts = text.split(",")
-        PlaceName = parts[0]
-        CityName = parts[1]
-        if nameu == "confirm":
-            if UserMoney.UserPoints > TicketPrice:
-                UserMoney.UserPoints = UserMoney.UserPoints - TicketPrice
-                UserMoney.save()
-                TransportSeatNumber = random.randrange(10000, 99999)
-                SeatNumber = str(TransportSeatNumber)
-                objectU = TransportTickets(
-                    TransportType, Place, Date, SeatType, SeatNumber, TicketPrice, UserID)
-                objectU.save()
-                TicketData = {'Ticket': objectU, 'DM': DM, 'Year': Year,
-                              'DayName': DayName, 'CityName': CityName, 'PlaceName': PlaceName}
-                return render(request, 'TransportTicket.html', TicketData)
-            else:
-                messages.error(
-                    request, 'You do not have enough money to buy the ticket.')
-    transport = Transport.objects.all()
-    d = {'Transport': transport}
-    return render(request, 'InCity.html', d)
-@login_required
-def LoadPlaces(request):
-    transport_id = request.GET.get('Transport')
-    Places = TransportPlace.objects.filter(Transport=transport_id).order_by('name')
-    return render(request, 'Place_dropdown_list_options.html', {'Places': Places})
-@login_required
-def LoadDate(request):
-    Place_id = request.GET.get('TransportPlace')
-    Dates = TransportDate.objects.filter(TransportPlace=Place_id).order_by('name')
-    return render(request, 'Date_dropdown_list_options.html', {'Dates': Dates})
-@login_required
-def LoadSeat(request):
-    Date_id = request.GET.get('TransportDate')
-    Seates = TransportSeatType.objects.filter(TransportDate=Date_id).order_by('name')
-    return render(request, 'Seat_dropdown_list_options.html', {'Seates': Seates})
-@login_required
-def TransportTicket(request):
-    return render(request, 'InCity.html')
+
+#healthCare Finish
 
 
 @login_required

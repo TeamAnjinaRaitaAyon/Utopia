@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@500&family=Montserrat:ital,wght@1,900&family=Ubuntu&display=swap');
+
+/* Main container styling */
+.main {
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px;
+}
+
+.contents {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    box-sizing: border-box;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Bike, Car, and Bus Section */
+.Bike,
+.Car,
+.Bus {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    max-width: 390px;
+    height: 140px;
+    font-size: 30px;
+    font-weight: 800;
+    cursor: pointer;
+    color: rgba(3, 6, 77, 0.916);
+    width: 100%;
+    margin: 10px;
+    border-radius: 20px;
+    background-color: #e0e0e5;
+    padding: 20px;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.2),
+                -6px -6px 12px rgba(255, 255, 255, 0.9);
+    transition: 0.3s ease-in-out;
+    text-decoration: none;
+}
+
+.contents a:hover {
+    color: #fff;
+    background-color: #86827a;
+    box-shadow: inset 6px 6px 12px rgba(0, 0, 0, 0.3),
+                inset -6px -6px 12px rgba(255, 255, 255, 0.9);
+}
+
+/* Popup styling */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.1);
+    visibility: hidden;
+    background-color: #e0e0e5;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2),
+                -10px -10px 20px rgba(255, 255, 255, 0.9);
+    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+/* Show popup when open */
+.open-popup {
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+    z-index: 1000;
+    padding: 20px;
+}
+
+/* Additional styling inside popup */
+.open-popup div,
+.open-popup span {
+    width: 100%;
+    font-size: large;
+    color: #333;
+}
+
+/* Input styling */
+.input-box {
+    margin: 10px 0;
+    align-items: center;
+}
+
+.input-box select,
+.input-box input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background-color: #f0f0f3;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2),
+                -5px -5px 10px rgba(255, 255, 255, 0.9);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Change input box shadow on focus */
+.input-box select:focus,
+.input-box input:focus {
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.3),
+                inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+}
+
+/* Button styling */
+.button-container button {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+.button-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .contents {
+        width: 100%;
+        margin: 10px;
+    }
+}

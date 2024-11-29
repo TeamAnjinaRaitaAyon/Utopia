@@ -1,0 +1,159 @@
+{% extends "BasePage.html" %} {% load static %} {% block title %} Transportation
+ {% endblock %} {% block more-style %}
+<link rel="stylesheet" href="{% static '/CSS/HealthcareMain.css' %}" />
+{% endblock %} {% block content %}
+<div class="main">
+  <div class="contents">
+    <div class="container popup" id="PopupHealthcare">
+      <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="content">
+          <div class="input-box">
+            <label for="city">City</label>
+            <select name="city" id="city">
+              <option selected>Select The City</option>
+              {% for city in CityList %}
+              <option value="{{ city.id }}">{{ city.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="input-box">
+            <label for="location">Select Your Location</label>
+            <select name="location" id="location">
+              <option selected>Choose Location</option>
+            </select>
+          </div>
+
+          <div class="input-box">
+            <label for="destination">Choose Destination</label>
+            <select name="destination" id="destination">
+              <option selected>Choose Destination</option>
+            </select>
+          </div>
+
+          <!-- Visiting Hour -->
+          <div class="input-box">
+            <label for="price">Select Your Vehicle</label>
+            <select name="price" id="price">
+              <option selected>Choose Vehicle</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button type="submit" name="save" value="confirm">
+            Confirm Ride
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+  integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+
+<script>
+  $(document).ready(function () {
+    // Trigger when HealthIssue is selected
+    $("#city").change(function () {
+      var city = $(this).val();
+      var location = $("#location").val();
+      $.ajax({
+        url: '{% url "get_locations" %}',
+        data: {
+          city: city,
+        },
+        success: function (response) {
+          $("#location").empty();
+          $("#location").append("<option selected>Choose Location</option>");
+          response.location.forEach(function (location) {
+            $("#location").append(
+              '<option value="' +
+                location.id+
+                '">' +
+                location.name+
+                "</option>"
+            );
+          });
+        },
+      });
+    });
+
+    // Trigger when HospitalType is selected
+    $("#location").change(function () {
+      var location = $(this).val();
+      var destination = $("#destination").val();
+
+      // Fetch hospitals based on Hospital Type
+      $.ajax({
+        url: '{% url "get_destination" %}',
+        data: {
+          location:location,
+        },
+        success: function (response) {
+          $("#destination").empty();
+          $("#destination").append("<option selected>Choose Destination</option>");
+          response.destination.forEach(function (destination) {
+            $("#destination").append(
+              '<option value="' +
+                destination.id +
+                '">' +
+                destination.name +
+                "</option>"
+            );
+          });
+        },
+      });
+    });
+
+    // Trigger when Hospital is selected
+    $("#destination").change(function () {
+      var destination = $(this).val();
+      var price = $("#price").val();
+
+      // Fetch doctors based on selected hospital
+      $.ajax({
+        url: '{% url "get_doctors" %}',
+        data: {
+          destination:destination
+        },
+        success: function (response) {
+          $("#price").empty();
+          $("#price").append("<option selected>Choose Vehicle</option>");
+          response.price.forEach(function (price) {
+            $("#price").append(
+              '<option value="' + price.id + '">' + price.name + "</option>"
+            );
+          });
+        },
+      });
+    });
+    // Form submission check for empty fields
+    $("form").submit(function (event) {
+      // Check if any field is empty
+      var city = $("#city").val();
+      var location = $("#location").val();
+      var destination = $("#destination").val();
+      var price = $("#price").val();
+
+      if (
+        !city ||
+        !location ||
+        !destination ||
+        !price
+      ) {
+        event.preventDefault(); // Prevent form submission
+        alert("Please fill all the fields");
+      }
+    });
+  });
+</script>
+
+{% endblock %}

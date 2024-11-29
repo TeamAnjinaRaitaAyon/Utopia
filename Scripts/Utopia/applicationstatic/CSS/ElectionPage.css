@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@500&family=Montserrat:ital,wght@1,900&family=Ubuntu&display=swap');
+
+.main {
+    width: auto;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 100px;
+    margin-top: 60px;
+}
+
+.electionsetup {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 100px;
+    width: auto;
+    border-radius: 18px;
+    padding: 30px;
+    background-color: #e0e0e0; /* Soft background */
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.15), 
+                -8px -8px 20px rgba(255, 255, 255, 0.7); /* Neumorphic shadow */
+}
+
+.electionsetup button {
+    border: none;
+}
+
+.electionsetuppage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 300px;
+    font-size: 50px;
+    font-weight: 800;
+    cursor: pointer;
+    color: rgb(19, 0, 114);
+    border-radius: 18px;
+    background-color: #e0e0e0; /* Match background */
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.15), 
+                -8px -8px 20px rgba(255, 255, 255, 0.7); /* Neumorphic shadow */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+.electionsetuppage:hover {
+    transform: translateY(-2px); /* Lift effect on hover */
+    background-color: #d5d5d5; /* Slightly darker on hover */
+}
+
+.votetime {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 100px;
+}
+
+.candidate1,
+.candidate2 {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 40%;
+    border-radius: 18px;
+    padding: 20px 30px;
+    background-color: #e0e0e0; /* Soft background */
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.15), 
+                -8px -8px 20px rgba(255, 255, 255, 0.7); /* Neumorphic shadow */
+}
+
+span {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 9px;
+    color: #404040;
+    display: flex;
+}
+
+.votetime button {
+    width: 60%;
+    height: 40px;
+    margin: 10px auto;
+    justify-content: center;
+    display: block;
+    color: #fff;
+    background-color: rgb(19, 0, 114);
+    font-size: 1em;
+    font-weight: bold;
+    margin-top: 20px;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+.votetime button:hover {
+    background-color: #05f134;
+    transform: translateY(-2px); /* Lift effect on hover */
+}
+
+img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid #e0e0e0; /* Match background */
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.15), 
+                -8px -8px 20px rgba(255, 255, 255, 0.7); /* Neumorphic shadow */
+}
+
+.percentage {
+    width: 90%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 60px;
+    border-radius: 18px;
+    background-color: #e0e0e0; /* Soft background */
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.15), 
+                -8px -8px 20px rgba(255, 255, 255, 0.7); /* Neumorphic shadow */
+}
+
+.c1,
+.c2 {
+    font-size: 22px;
+    font-weight: 600;
+    height: 100%;
+    color: white;
+    border-radius: 18px;
+}
+
+.c1 {
+    background-color: red; /* Candidate 1 background */
+}
+
+.c2 {
+    background-color: blue; /* Candidate 2 background */
+}
+
+.voteshare {
+    font-size: 22px;
+    font-weight: 600;
+    color: rgb(19, 0, 114);
+    text-align: center;
+    align-items: center;
+    width: 20%;
+}

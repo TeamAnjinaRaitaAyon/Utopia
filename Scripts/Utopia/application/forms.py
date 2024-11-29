@@ -11,13 +11,11 @@ from django.core.exceptions import ValidationError
 import re
 
 from .models import *
-from .models import Appointment
 
 
 from django.contrib.auth.models import User
 from django import forms
 from django.forms import ModelForm
-from .models import Collegee, Honourss, Masterss,CollegeSubject,CollegeApplicant,HonoursSubject,HonoursApplicant,MastersSubject,MastersApplicant
 
 
 class RegisterForm(ModelForm):
@@ -94,28 +92,3 @@ def extract_district_from_mp(mp_string):
         return match.group(1)
     else:
         return None
-
-class CollegeApplicantForm(forms.ModelForm):
-    subject = forms.ModelChoiceField(queryset=CollegeSubject.objects.all())
-    college = forms.ModelChoiceField(queryset=Collegee.objects.all())
-    class Meta:
-        model = CollegeApplicant
-        fields = '__all__'
-class HonoursApplicantForm(forms.ModelForm):
-    subject = forms.ModelChoiceField(queryset=HonoursSubject.objects.all())
-    honours = forms.ModelChoiceField(queryset=Honourss.objects.all())
-    class Meta:
-        model = HonoursApplicant
-        fields = '__all__'
-class MastersApplicantForm(forms.ModelForm):
-    subject = forms.ModelChoiceField(queryset=MastersSubject.objects.all())
-    masters = forms.ModelChoiceField(queryset=Masterss.objects.all())
-    class Meta:
-        model = MastersApplicant
-        fields = '__all__'
-
-
-class AppointmentForm(forms.ModelForm):
-    class Meta:
-        model = Appointment
-        fields = ['name', 'email', 'phone', 'facility', 'date', 'description']
