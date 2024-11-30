@@ -10,6 +10,8 @@ function openPopupSports() {
 function closePopupSports() {
     popupSports.classList.remove("open-popup")
 }
+
+
 function openPopupArts() {
     popupArts.classList.add("open-popup");
 }

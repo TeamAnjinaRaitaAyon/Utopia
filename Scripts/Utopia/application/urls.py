@@ -19,7 +19,14 @@ urlpatterns = [
     path('MinistySetupPage/',views.MinistrySetupPage,name='MinistrySetupPage'),
 
     path('EducationPage',views.EducationPage,name='EducationPage'),
+    
+    
     path('EntertainmentPage/',views.EntertainmentPage,name='EntertainmentPage'),
+    path('event/<int:event_id>/', views.event_details, name='event_details'),
+    path('book_seats/', views.book_seats, name='book_seats'),
+    
+    
+    
     path('Am_I_A_Citizen/',views.Am_I_A_CitizenPage,name='Am_I_A_CitizenPage'),
     path('NewsDetailsPage/<path:news>/',views.NewsDetailsPage, name='NewsDetailsPage'),
     path('AboutPage/',views.AboutPage,name='AboutPage'),

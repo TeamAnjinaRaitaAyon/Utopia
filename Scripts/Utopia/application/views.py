@@ -9,7 +9,7 @@ from newsapi.newsapi_client import NewsApiClient
 from django.utils.html import strip_tags
 from django.urls import reverse
 from django.conf import Settings
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.decorators import login_required
@@ -471,78 +471,43 @@ def success(request):
     return render(request, 'Education/success.html')
 
 
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import SportsEvent
+
 @login_required
 def EntertainmentPage(request):
-    if request.method == "POST":
-        nameu = request.POST.get('save')
-        SportName = request.POST.get('Sport')
-        SportName = Sport.objects.get(id=SportName)
-        Venue = request.POST.get('SportVenue')
-        Venue = SportVenue.objects.get(id=Venue)
-        Date = request.POST.get('SportDate')
-        Date = SportDate.objects.get(id=Date)
-        Date = str(Date)
-        SeatType = request.POST.get('SportSeatType')
-        SeatType = SportSeatType.objects.get(id=SeatType)
-        SeatType = str(SeatType)
-        TicketPrice = get_number_from_string(SeatType)
-        TicketPrice = int(TicketPrice)
-        SeatType = SeatType.split("(")[0]
-        UserID = request.user.username
-        UserMoney = UsersPrimaryDetails.objects.get(UserID=UserID)
-        parts = Date.split("-")
-        month, day = parts[1], parts[2]
-        month_name = calendar.month_name[int(month)]
-        DM = f"{month_name} {day}TH"
-        Year = Date.split("-")[0]
-        pattern = r"\d{4}-\d{2}-\d{2}"
-        match = re.search(pattern, Date)
-        year, month, day = int(match.group(0)[:4]), int(
-            match.group(0)[5:7]), int(match.group(0)[8:])
-        DayName = calendar.day_name[calendar.weekday(year, month, day)]
-        text = str(Venue)
-        parts = text.split(",")
-        GroundName = parts[0]
-        CityName = parts[1]
-        if nameu == "confirm":
-            if UserMoney.UserPoints > TicketPrice:
-                UserMoney.UserPoints = UserMoney.UserPoints-TicketPrice
-                UserMoney.save()
-                SportSeatNumber = random.randrange(00000, 99999)
-                SeatNumber = str(SportSeatNumber)
-                objectU = SportTickets(
-                    SportName, Venue, Date, SeatType, SeatNumber, TicketPrice, UserID)
-                objectU.save()
-                TicketData = {'Ticket': objectU, 'DM': DM, 'Year': Year,
-                              'DayName': DayName, 'CityName': CityName, 'GroundName': GroundName}
-                return render(request, 'SportTicket.html', TicketData)
+    sportsEvent = SportsEvent.objects.all()
+    return render(request, 'EntertainmentPage.html', {'sportsEvent': sportsEvent})
+
+@login_required
+def event_details(request, event_id):
+    event = get_object_or_404(SportsEvent, pk=event_id)
+    return render(request, 'event_details.html', {'event': event})
+
+@csrf_exempt
+def book_seats(request):
+    if request.method == 'POST':
+        import json
+        data = json.loads(request.body)
+
+        seats = data.get('seats', [])
+        total_price = data.get('totalPrice', 0)
+        event_id = data.get('event_id')
+
+        event = get_object_or_404(SportsEvent, pk=event_id)
+
+        for seat in seats:
+            if seat in event.seats and event.seats[seat]['available']:
+                event.seats[seat]['available'] = False  # Mark the seat as unavailable
             else:
-                messages.error(
-                    request, 'You do not have enough money to buy the ticket.')
-    game = Sport.objects.all()
-    d = {'Sport': game}
-    return render(request, 'EntertainmentPage.html', d)
+                return JsonResponse({'success': False, 'message': 'Some seats are already booked.'})
 
+        event.save()  # Save the updated event with booked seats
+        return JsonResponse({'success': True, 'message': 'Seats booked successfully!'})
 
-@login_required
-def LoadVenues(request):
-    gameid = request.GET.get('Sport')
-    Venues = SportVenue.objects.filter(Sport=gameid).order_by('name')
-    return render(request, 'Venue_dropdown_list_options.html', {'Venues': Venues})
-
-
-@login_required
-def LoadDate(request):
-    Venueid = request.GET.get('SportVenue')
-    Dates = SportDate.objects.filter(SportVenue=Venueid).order_by('name')
-    return render(request, 'Date_dropdown_list_options.html', {'Dates': Dates})
-
-
-@login_required
-def LoadSeat(request):
-    Dateid = request.GET.get('SportDate')
-    Seates = SportSeatType.objects.filter(SportDate=Dateid).order_by('name')
-    return render(request, 'Seat_dropdown_list_options.html', {'Seates': Seates})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
 
 @login_required

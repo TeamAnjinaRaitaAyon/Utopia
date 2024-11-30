@@ -1,0 +1,138 @@
+{% extends 'BasePage.html' %} {% block content %}
+<div class="event-container">
+  <h1>{{ event.event_name }}</h1>
+  <p><strong>Type:</strong> {{ event.sport_type }}</p>
+  <p><strong>Match Details:</strong> {{ event.match_details }}</p>
+  <p><strong>Event Date:</strong> {{ event.event_date }}</p>
+  <p><strong>Venue:</strong> {{ event.venue }}</p>
+  <p><strong>City:</strong> {{ event.city }}</p>
+  <p><strong>Country:</strong> {{ event.country }}</p>
+
+  {% if event.event_image %}
+  <img src="{{ event.event_image.url }}" alt="Event Image" />
+  {% else %}
+  <p>No event image available</p>
+  {% endif %}
+
+  <p><strong>Seats:</strong></p>
+
+  <div id="seatsContainer">
+    <!-- Loop through the seats and display them as small boxes -->
+    {% for seat, details in event.seats.items %}
+    <div
+      class="seat-box"
+      id="seat-{{ seat }}"
+      data-seat="{{ seat }}"
+      data-price="{{ details.price }}"
+      class="{% if details.available %}available{% else %}unavailable{% endif %}"
+    >
+      {{ seat }}
+      <!-- Display seat number inside the box -->
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Selected Seats Display -->
+  <div class="seats-info">
+    <p><strong>Selected Seats:</strong> <span id="selectedSeats">None</span></p>
+    <p><strong>Total Price:</strong> $<span id="totalPrice">0.00</span></p>
+  </div>
+</div>
+{% endblock %} {% block more-style %}
+<style>
+  /* Center everything */
+  .event-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  h1,
+  p {
+    margin: 10px;
+  }
+
+  #seatsContainer {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 30px; /* Increase the gap between seat boxes */
+    justify-content: center;
+  }
+
+  .seat-box {
+    width: 100px; /* Increase the width of the seat box */
+    height: 50px; /* Increase the height of the seat box */
+    border: 1px solid #000;
+    text-align: center;
+    line-height: 50px; /* Center the seat number vertically */
+    cursor: pointer;
+    font-weight: bold;
+    background-color: green;
+    color: white;
+  }
+
+  .available {
+    background-color: green;
+  }
+
+  .unavailable {
+    background-color: red;
+  }
+
+  .seat-box.selected {
+    background-color: blue; /* Highlight selected seat */
+  }
+
+  .seats-info {
+    margin-top: 20px;
+  }
+
+  img {
+    margin-top: 10px;
+    max-width: 100%;
+    height: auto;
+  }
+</style>
+{% endblock %} {% block more-script %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let selectedSeats = [];
+    let totalPrice = 0;
+
+    // Handle seat click event
+    document.querySelectorAll(".seat-box").forEach((seatBox) => {
+      seatBox.addEventListener("click", function () {
+        let seatId = seatBox.getAttribute("data-seat");
+        let seatPrice = parseFloat(seatBox.getAttribute("data-price"));
+
+        // Check if seat is available (green)
+        if (seatBox.classList.contains("available")) {
+          seatBox.classList.remove("available"); // Remove 'available' class
+          seatBox.classList.add("unavailable"); // Change to unavailable (red)
+          selectedSeats.push(seatId);
+          totalPrice += seatPrice;
+        }
+        // If it's already selected (blue), deselect it and make it available again
+        else if (
+          seatBox.classList.contains("unavailable") &&
+          selectedSeats.includes(seatId)
+        ) {
+          seatBox.classList.remove("unavailable"); // Change back to red
+          seatBox.classList.add("available"); // Turn it green (available)
+          selectedSeats = selectedSeats.filter((seat) => seat !== seatId); // Remove from selected list
+          totalPrice -= seatPrice; // Adjust total price
+        }
+
+        // Update UI with selected seats and total price
+        document.getElementById("selectedSeats").textContent =
+          selectedSeats.join(", ") || "None";
+        document.getElementById("totalPrice").textContent =
+          totalPrice.toFixed(2);
+      });
+    });
+  });
+</script>
+{% endblock %}

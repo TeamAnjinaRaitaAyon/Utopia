@@ -4,13 +4,14 @@
     font-family: sans-serif;
 }
 body {
+    padding: 20px;
     background-image: url("/static/MEDIA/IMAGE/Background.jpg");
     background-size: cover ;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: bottom;
     margin: 0;
-    padding:  20px 40px;
+
     margin-right: 0px;
     height: 100vh;
     overflow-y: auto;

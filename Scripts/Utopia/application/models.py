@@ -93,49 +93,24 @@ class PublicOpinions(models.Model):
         return str(self.Opinion)
 
 
-# entertainment/Sports
+# entertainment
 
-
-class Sport(models.Model):
-    name = models.CharField(max_length=500)
-
-    def __str__(self):
-        return self.name
-
-
-class SportVenue(models.Model):
-    Sport = models.ForeignKey(Sport, on_delete=models.CASCADE)
-    name = models.CharField(max_length=1000)
-
-    def __str__(self):
-        return self.name
-
-
-class SportDate(models.Model):
-    SportVenue = models.ForeignKey(SportVenue, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+class SportsEvent(models.Model):
+    event_name = models.CharField(max_length=255)  # Event name, e.g., "World Cup Final"
+    match_details = models.CharField(max_length=255, blank=True, null=True)  # Teams playing, e.g., "Bangladesh vs. India"
+    sport_type = models.CharField(max_length=100)  # Type of sport, e.g., "Cricket"
+    event_date = models.DateTimeField()  # Date and time of the event
+    venue = models.CharField(max_length=255)  # Venue name
+    city = models.CharField(max_length=100)  # City where the event is happening
+    country = models.CharField(max_length=100)  # Country where the event is happening
+    event_image = models.ImageField(upload_to='event_images/', blank=True, null=True)  # Optional event image
+    seats = models.JSONField(default=dict)  # Dictionary to store seat details
 
     def __str__(self):
-        return self.name
+        return f"{self.event_name} - {self.match_details or 'Details Not Provided'}"
 
 
-class SportSeatType(models.Model):
-    SportDate = models.ForeignKey(SportDate, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.name
-
-
-class SportTickets(models.Model):
-    SportName = models.CharField(max_length=500)
-    SportVenue = models.CharField(max_length=1000)
-    SportDate = models.CharField(max_length=100)
-    SportSeatType = models.CharField(max_length=100)
-    SportSeatNumber = models.CharField(max_length=500)
-    SportTicketPrice = models.CharField(max_length=500)
-    UserID = models.ForeignKey(UsersPrimaryDetails, on_delete=models.CASCADE)
-    id = models.AutoField(primary_key=True)
 
 
 from django.core.exceptions import ValidationError  # Import Vali
