@@ -2,8 +2,15 @@
 {% load static %}
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="{% static 'CSS/EntertainmentPage/SportTicket.css' %}" />
-    <link rel="icon" type="image/x-icon" href="{% static 'favicon/favicon.ico' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'CSS/EntertainmentPage/SportTicket.css' %}"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static 'favicon/favicon.ico' %}"
+    />
     <title>SportsTicket-Utopia</title>
   </head>
 
@@ -12,74 +19,81 @@
       <h2>Your Purchased Tickets</h2>
       <!-- Loop over the tickets -->
       {% for ticket in tickets %}
-        <div class="ticket">
-          <div class="left">
-            <div class="image">
-              <p class="admit-one">
-                <span>Sports</span>
-                <span>Utopia</span>
-                <span>Sports</span>
-              </p>
-              <div class="ticket-number">
-                <p>
-                  User ID : {{ ticket.user.id }}
-                  <!-- Display user ID from Ticket -->
-                </p>
-              </div>
-            </div>
-            <div class="ticket-info">
-              <p class="date">
-                <span>{{ ticket.event_date|date:"l" }}</span>
-                <!-- Day of the week -->
-                <span class="june-29">{{ ticket.event_date|date:"M d" }}</span>
-                <!-- Date (Month Day) -->
-                <span>{{ ticket.event_date|date:"Y" }}</span>
-                <!-- Year -->
-              </p>
-              <div class="show-name">
-                <h1>Welcome To<br />{{ ticket.city }}</h1>
-                <!-- Event city -->
-                <p>({{ ticket.sport_type }} Match)</p>
-                <!-- Sport type -->
-              </div>
-              <p class="location">
-                <span>{{ ticket.venue }}</span>
-                <!-- Venue name -->
-                <span class="separator"><i class="far fa-smile"></i></span>
-                <span>{{ ticket.city }}</span>
-                <!-- City -->
+      <div class="ticket">
+        <div class="left">
+          <div class="image">
+            <p class="admit-one">
+              <span>Sports</span>
+              <span>Utopia</span>
+              <span>Sports</span>
+            </p>
+            <div class="ticket-number">
+              <p>
+                User ID : {{ ticket.user.id }}
+                <!-- Display user ID from Ticket -->
               </p>
             </div>
           </div>
-          <div class="right">
-            <div class="right-info-container">
-              <div class="show-name">
-                <h1>Ticket ID : {{ ticket.id }}</h1>
-                <!-- Ticket ID -->
-              </div>
-              <div class="time">
-                <p>{{ ticket.selected_seats|join:", " }}</p>
-                <!-- Selected seats (comma separated) -->
-                <span class="june-29">{{ ticket.total_price }} BDT</span>
-                <!-- Total price -->
-              </div>
-              <div class="barcode">
-                <img src="{{ ticket.event_image.url }}" alt="Event Image" />
-              </div>
-
-              <p class="ticket-number">
-                Seat: {{ ticket.selected_seats|join:", " }}
-                <!-- Seat(s) -->
-              </p>
+          <div class="ticket-info">
+            <p class="date">
+              <span>{{ ticket.event_date|date:"l" }}</span>
+              <!-- Day of the week -->
+              <span class="june-29">{{ ticket.event_date|date:"M d" }}</span>
+              <!-- Date (Month Day) -->
+              <span>{{ ticket.event_date|date:"Y" }}</span>
+              <!-- Year -->
+            </p>
+            <div class="show-name">
+              <h1>Welcome To<br />{{ ticket.city }}</h1>
+              <!-- Event city -->
+              <p>({{ ticket.sport_type }} Match)</p>
+              <!-- Sport type -->
             </div>
+            <p class="location">
+              <span>{{ ticket.venue }}</span>
+              <!-- Venue name -->
+              <span class="separator"><i class="far fa-smile"></i></span>
+              <span>{{ ticket.city }}</span>
+              <!-- City -->
+            </p>
           </div>
         </div>
+        <div class="right">
+          <div class="right-info-container">
+            <div class="show-name">
+              <h1>Ticket ID : {{ ticket.id }}</h1>
+              <!-- Ticket ID -->
+            </div>
+            <div class="time">
+              <p>{{ ticket.selected_seats|join:", " }}</p>
+              <!-- Selected seats (comma separated) -->
+              <span class="june-29">{{ ticket.total_price }} BDT</span>
+              <!-- Total price -->
+            </div>
+            <div class="barcode">
+              <img src="{{ ticket.event_image.url }}" alt="Event Image" />
+            </div>
+
+            <p class="ticket-number">
+              Seat: {{ ticket.selected_seats|join:", " }}
+              <!-- Seat(s) -->
+            </p>
+            <p class="ticket-number">
+              Seat: {{ ticket.purchase_date}}
+              <!-- Seat(s) -->
+            </p>
+          </div>
+        </div>
+      </div>
       {% endfor %}
     </div>
 
     <!-- Button to go back to the previous page -->
     <div class="back-button">
-      <button onclick="window.history.back()">Go Back</button>
+      <form action="" method="POST">
+        {% csrf_token %}
+        <button>Go Back</button>
+      </form>
     </div>
 
     <div class="greet">

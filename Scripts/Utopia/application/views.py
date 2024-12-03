@@ -491,7 +491,7 @@ import json
 
 # Set up Stripe API key
 stripe.api_key = settings.STRIPE_TEST_API_KEY
-
+@login_required
 def event_details(request, event_id):
     event = get_object_or_404(SportsEvent, pk=event_id)
 
@@ -522,19 +522,17 @@ def event_details(request, event_id):
         },
     ],
     mode='payment',
-    success_url=f"{request.build_absolute_uri('payments/payment-success/')}?session_id={{CHECKOUT_SESSION_ID}}",
-    cancel_url=request.build_absolute_uri('payments/payment-cancelled/'),
+    success_url=f"{request.build_absolute_uri('/success/')}?session_id={{CHECKOUT_SESSION_ID}}",
+    cancel_url=request.build_absolute_uri('/payment-cancelled/'),
     client_reference_id=str(event.id),
     metadata={
         'selected_seats': ','.join(selected_seats),
     }
 )
-
-        # Redirect to Stripe Checkout page
+        # Redirect to Stripe Checkout pa
         return redirect(session.url, code=303)
 
     return render(request, 'event_details.html', {'event': event}) 
-
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.timezone import now
@@ -545,11 +543,12 @@ from .models import SportsEvent, Ticket
 # Set the Stripe API key
 stripe.api_key = settings.STRIPE_TEST_API_KEY
 
+@login_required
 def payment_success(request):
+
     session_id = request.GET.get('session_id')
     session = stripe.checkout.Session.retrieve(session_id)
     print(session.payment_status)
-    
     if session.payment_status == 'paid':
         # Retrieve the event using client_reference_id
         event = get_object_or_404(SportsEvent, pk=session.client_reference_id)
@@ -592,19 +591,10 @@ def payment_success(request):
         ticket_ids = [ticket.id for ticket in tickets]
         return redirect(f'/SportTicket/?ticket_ids={",".join(map(str, ticket_ids))}')
     
-    # Handle payment failure
-    return render(request, 'payment_failure.html', {'message': 'Payment failed.'})
-
-
-def payment_cancelled(request):
-    return render(request, 'payment_cancelled.html', {'message': 'Payment was cancelled.'})
+    return render(request, 'success.html')
 
 
 
-
-import stripe
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def stripe_webhook(request):
@@ -637,6 +627,8 @@ def SportTicket(request):
     # Get the list of ticket IDs from the query parameters
     ticket_ids = request.GET.get('ticket_ids', '')
     print(f'this is {ticket_ids}')
+    if request.method == 'POST':
+       return redirect(TicketsPage)
     if ticket_ids:
         # Convert the ticket_ids into a list of integers
         ticket_ids_list = list(map(int, ticket_ids.split(',')))
@@ -827,10 +819,8 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 def payment_page(request):
     return render(request, "payments/payment_page.html", {"publishable_key": settings.STRIPE_PUBLISHABLE_KEY})
 
-def payment_success(request):
-    return render(request,"payments/success.html")
 def payment_cancel(request):
-    return render(request,"payments/cacel.html")
+    return render(request,"payments/cancel.html")
 def create_checkout_session(request):
     if request.method == "POST":
         try:

@@ -32,7 +32,7 @@ urlpatterns = [
     path('ContactPage/',views.ContactPage,name='ContactPage'),
     path('HelpPage/',views.HelpPage,name='HelpPage'),
     path('TicketsPage/',views.TicketsPage,name='TicketsPage'),
-   path('SportTicket/',views.SportTicket,name='SportTicket'),
+    path('SportTicket/',views.SportTicket,name='SportTicket'),
     path('TransportationMain/', views.TransportationMain, name='TransportationMain'),
     path('InCity/', views.InCity, name='InCity'),
     path('CityToCity/', views.CityToCity, name='CityToCity'),
@@ -54,9 +54,7 @@ urlpatterns = [
     
     path('ThankYou', views.ThankYou, name='ThankYou'),
 
-    path('<path:undefined_path>/', views.Undefine),
-    
-    
+
     #payment
     
     path("payment-page/", views.payment_page, name="payment_page"),
@@ -64,6 +62,9 @@ urlpatterns = [
     path("success/", views.payment_success, name="payment_success"),
     path("cancel/", views.payment_cancel, name="payment_cancel"),
     path('stripe-webhook/', views.stripe_webhook, name='stripe_webhook'),
+    path('<path:undefined_path>/', views.Undefine),
+    
+
 
 ]
 
