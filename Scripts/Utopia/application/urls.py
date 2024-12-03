@@ -23,7 +23,6 @@ urlpatterns = [
     
     path('EntertainmentPage/',views.EntertainmentPage,name='EntertainmentPage'),
     path('event/<int:event_id>/', views.event_details, name='event_details'),
-    path('book_seats/', views.book_seats, name='book_seats'),
     
     
     
@@ -33,7 +32,7 @@ urlpatterns = [
     path('ContactPage/',views.ContactPage,name='ContactPage'),
     path('HelpPage/',views.HelpPage,name='HelpPage'),
     path('TicketsPage/',views.TicketsPage,name='TicketsPage'),
-
+   path('SportTicket/',views.SportTicket,name='SportTicket'),
     path('TransportationMain/', views.TransportationMain, name='TransportationMain'),
     path('InCity/', views.InCity, name='InCity'),
     path('CityToCity/', views.CityToCity, name='CityToCity'),
@@ -56,6 +55,16 @@ urlpatterns = [
     path('ThankYou', views.ThankYou, name='ThankYou'),
 
     path('<path:undefined_path>/', views.Undefine),
+    
+    
+    #payment
+    
+    path("payment-page/", views.payment_page, name="payment_page"),
+    path("create-checkout-session/", views.create_checkout_session, name="create_checkout_session"),
+    path("success/", views.payment_success, name="payment_success"),
+    path("cancel/", views.payment_cancel, name="payment_cancel"),
+    path('stripe-webhook/', views.stripe_webhook, name='stripe_webhook'),
+
 ]
 
 if settings.DEBUG:

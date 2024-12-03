@@ -1,14 +1,118 @@
+/* Header styles */
+.ticket-header h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
 
-.show-details {
-    text-align: center;
+.ticket-header p {
+  font-size: 1rem;
+  color: #666;
+}
+.ticket-header{
+    flex: 1;
+}
+
+/* Styling for the overall ticket container */
+.ticket-details {
+  background-color: #fff;
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  border-radius: 10%;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  margin: 30px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ticket-details:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Ticket info section */
+.ticket-info p {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 8px 0;
+}
+.ticket-info{
+    flex: 1;
+}
+
+.ticket-info strong {
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* Styling for the event image */
+.ticket-image img {
+  width: 50%;
+  height: auto;
+  border-radius: 100%;
+  margin-top: 20px;
+  size: 50px;
+  transition: transform 0.3s ease;
+}
+.ticket-image{
     justify-content: center;
-    margin-bottom: 30px;
-    margin-top: 30px;
-    box-shadow: -5px -5px 10px #000000a8, 5px 5px 10px #4e4f54;
-    border-radius: 50px;
-    border:1px solid rgb(26, 25, 25);
-    background-color: rgba(0, 0, 0, 0.868);
-    color: white;
-    padding:20px 90px;
-    margin-bottom: 250px;
+    align-items: center;
+    display: flex;
+    flex: 1;
+}
+.ticket-image img:hover {
+  transform: scale(1.05);
+}
+
+/* Match details section */
+.ticket-info .match-details {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: #444;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
+}
+
+/* Date formatting */
+.ticket-info .purchase-date {
+  font-size: 1rem;
+  font-style: italic;
+  color: #888;
+  margin-top: 10px;
+}
+
+/* Seat selection and pricing details */
+.ticket-info .seat-price {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.ticket-info .seat-price p {
+  font-size: 1.1rem;
+}
+
+.ticket-info .seat-price span {
+  color: #ff6347;
+  font-weight: bold;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .ticket-details {
+    padding: 15px;
+  }
+
+  .ticket-info p {
+    font-size: 1rem;
+  }
+
+  .ticket-info .seat-price {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Payment Page - {% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="mb-4">Complete Your Payment</h1>
+    <button id="checkout-button" class="btn btn-primary btn-lg">Pay $20</button>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+    const stripe = Stripe("{{ publishable_key }}"); // Your Publishable Key from the context
+
+    document.getElementById("checkout-button").addEventListener("click", () => {
+        fetch("{% url 'create_checkout_session' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.error) {
+                alert("Error: " + data.error);
+            } else {
+                return stripe.redirectToCheckout({ sessionId: data.id });
+            }
+        })
+        .catch((error) => console.error("Error:", error));
+    });
+</script>
+{% endblock %}

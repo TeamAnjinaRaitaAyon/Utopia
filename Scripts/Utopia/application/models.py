@@ -110,6 +110,28 @@ class SportsEvent(models.Model):
         return f"{self.event_name} - {self.match_details or 'Details Not Provided'}"
 
 
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
+
+class Ticket(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Reference to the user purchasing the ticket
+    event_name = models.CharField(max_length=255)  # Event name, e.g., "World Cup Final"
+    match_details = models.CharField(max_length=255, blank=True, null=True)  # Teams playing, e.g., "Bangladesh vs. India"
+    sport_type = models.CharField(max_length=100)  # Type of sport, e.g., "Cricket"
+    event_date = models.DateTimeField()  # Date and time of the event
+    venue = models.CharField(max_length=255)  # Venue name
+    city = models.CharField(max_length=100)  # City where the event is happening
+    country = models.CharField(max_length=100)  # Country where the event is happening
+    event_image = models.ImageField(upload_to='event_images/', blank=True, null=True)  # Optional event image
+    seats = models.JSONField(default=dict)  # Dictionary to store seat details
+    selected_seats = models.JSONField()  # List of selected seats
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)  # Total price for the tickets
+    purchase_date = models.DateTimeField(default=timezone.now)  # Timestamp of the ticket purchase
+
+    def __str__(self):
+        return f"Ticket for {self.event_name} - {self.user.username}"
+
 
 
 

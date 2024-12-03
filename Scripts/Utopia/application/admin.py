@@ -12,6 +12,7 @@ admin.site.register(CountryMinistries)
 admin.site.register(PublicOpinions)
 #entertainment
 admin.site.register(SportsEvent)
+admin.site.register(Ticket)
 #HealthCare
 
 admin.site.register(Hospital)

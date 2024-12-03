@@ -481,38 +481,178 @@ def EntertainmentPage(request):
     sportsEvent = SportsEvent.objects.all()
     return render(request, 'EntertainmentPage.html', {'sportsEvent': sportsEvent})
 
-@login_required
+
+import stripe
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from django.conf import settings
+from .models import SportsEvent, Ticket
+import json
+
+# Set up Stripe API key
+stripe.api_key = settings.STRIPE_TEST_API_KEY
+
 def event_details(request, event_id):
     event = get_object_or_404(SportsEvent, pk=event_id)
-    return render(request, 'event_details.html', {'event': event})
+
+    if request.method == 'POST':
+        # Get the selected seats and total price from the POST data
+        selected_seats = json.loads(request.POST.get('selectedSeats', '[]'))
+        total_price = float(request.POST.get('totalPrice', 0.0))
+        # Create a Stripe Checkout session
+        session = stripe.checkout.Session.create(
+    payment_method_types=['card'],
+    line_items=[
+        {
+            'price_data': {
+                'currency': 'bdt',
+                'product_data': {
+                    'name': f'{event.event_name} Tickets',
+                    'description': (
+                        f"Event: {event.event_name}\n"
+                        f"Match: {event.match_details}\n"
+                        f"Sport: {event.sport_type}\n"
+                        f"Date: {event.event_date.strftime('%d %b %Y, %I:%M %p')}\n"
+                        f"Venue: {event.venue}, {event.city}, {event.country}"
+                    ),
+                },
+                'unit_amount': int(total_price/len(selected_seats) * 100) ,  # Amount in smallest currency unit
+            },
+            'quantity': len(selected_seats),
+        },
+    ],
+    mode='payment',
+    success_url=f"{request.build_absolute_uri('payments/payment-success/')}?session_id={{CHECKOUT_SESSION_ID}}",
+    cancel_url=request.build_absolute_uri('payments/payment-cancelled/'),
+    client_reference_id=str(event.id),
+    metadata={
+        'selected_seats': ','.join(selected_seats),
+    }
+)
+
+        # Redirect to Stripe Checkout page
+        return redirect(session.url, code=303)
+
+    return render(request, 'event_details.html', {'event': event}) 
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.timezone import now
+import stripe
+from django.conf import settings
+from .models import SportsEvent, Ticket
+
+# Set the Stripe API key
+stripe.api_key = settings.STRIPE_TEST_API_KEY
+
+def payment_success(request):
+    session_id = request.GET.get('session_id')
+    session = stripe.checkout.Session.retrieve(session_id)
+    print(session.payment_status)
+    
+    if session.payment_status == 'paid':
+        # Retrieve the event using client_reference_id
+        event = get_object_or_404(SportsEvent, pk=session.client_reference_id)
+        
+        # Extract metadata from the session
+        selected_seats = session.metadata['selected_seats'].split(',')
+        total_price = float(session.amount_total) / 100  # Convert cents to currency unit
+        
+        # Validate and update seat availability
+        for seat in selected_seats:
+            if seat in event.seats and event.seats[seat].get('available', False):
+                event.seats[seat]['available'] = False  # Mark seat as unavailable
+            else:
+                return render(request, 'payment_failure.html', {'message': 'Some seats are already booked.'})
+        
+        # Save updated event seat availability
+        event.save()
+
+        # Create tickets
+        tickets = []
+        for seat in selected_seats:
+            ticket = Ticket.objects.create(
+                user=request.user,
+                event_name=event.event_name,
+                match_details=event.match_details,
+                sport_type=event.sport_type,
+                event_date=event.event_date,
+                venue=event.venue,
+                city=event.city,
+                country=event.country,
+                event_image=event.event_image,
+                seats=event.seats,  # Include the updated seat information
+                selected_seats=[seat],  # Include the specific selected seat
+                total_price=total_price / len(selected_seats),  # Calculate price per seat
+                purchase_date=now(),  # Use the current timestamp
+            )
+            tickets.append(ticket)
+
+        # Redirect to the SportTicket page with ticket IDs
+        ticket_ids = [ticket.id for ticket in tickets]
+        return redirect(f'/SportTicket/?ticket_ids={",".join(map(str, ticket_ids))}')
+    
+    # Handle payment failure
+    return render(request, 'payment_failure.html', {'message': 'Payment failed.'})
+
+
+def payment_cancelled(request):
+    return render(request, 'payment_cancelled.html', {'message': 'Payment was cancelled.'})
+
+
+
+
+import stripe
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
-def book_seats(request):
-    if request.method == 'POST':
-        import json
-        data = json.loads(request.body)
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    endpoint_secret = 'your-stripe-webhook-secret'
+    
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError:
+        return JsonResponse({'success': False}, status=400)
+    except stripe.error.SignatureVerificationError:
+        return JsonResponse({'success': False}, status=400)
 
-        seats = data.get('seats', [])
-        total_price = data.get('totalPrice', 0)
-        event_id = data.get('event_id')
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        # Handle successful payment and create tickets here
+        # Example: session['metadata'] can store event_id or user info
 
-        event = get_object_or_404(SportsEvent, pk=event_id)
-
-        for seat in seats:
-            if seat in event.seats and event.seats[seat]['available']:
-                event.seats[seat]['available'] = False  # Mark the seat as unavailable
-            else:
-                return JsonResponse({'success': False, 'message': 'Some seats are already booked.'})
-
-        event.save()  # Save the updated event with booked seats
-        return JsonResponse({'success': True, 'message': 'Seats booked successfully!'})
-
-    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+    return JsonResponse({'success': True})
 
 
-@login_required
+
+from django.shortcuts import render, get_object_or_404
+from .models import Ticket
+
 def SportTicket(request):
-    return render(request, 'SportTicket.html')
+    # Get the list of ticket IDs from the query parameters
+    ticket_ids = request.GET.get('ticket_ids', '')
+    print(f'this is {ticket_ids}')
+    if ticket_ids:
+        # Convert the ticket_ids into a list of integers
+        ticket_ids_list = list(map(int, ticket_ids.split(',')))
+
+        # Fetch the tickets based on the IDs
+        tickets = Ticket.objects.filter(id__in=ticket_ids_list, user=request.user)
+
+        # Check if tickets exist, otherwise handle the case
+        if not tickets:
+            return redirect('some_error_or_homepage_url')  # Redirect if no tickets found for the user
+    else:
+        tickets = []
+
+    # Render the template with the tickets
+    return render(request, 'SportTicket.html', {'tickets': tickets})
+
 
 # sports finish
 
@@ -660,12 +800,61 @@ def HelpPage(request):
     return render(request, 'HelpPage.html')
 
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Ticket
+
 @login_required
 def TicketsPage(request):
-    user = request.user.username
-    Tickets = SportTickets.objects.filter(UserID=user)
-    return render(request, 'TicketsPage.html', {'Tickets': Tickets})
+    # Extract the username of the logged-in user
+    username = request.user.username  # Extracting just the username
 
+    # Filter the tickets based on the logged-in user's username
+    tickets = Ticket.objects.filter(user__username=username)  # Filtering tickets by username
+
+    # Print the username for debugging (optional)
+    print(f"Logged-in User's Username: {username}")
+    
+    return render(request, 'TicketsPage.html', {'Tickets': tickets})
+
+
+#payment
+import stripe
+from django.conf import settings
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+def payment_page(request):
+    return render(request, "payments/payment_page.html", {"publishable_key": settings.STRIPE_PUBLISHABLE_KEY})
+
+def payment_success(request):
+    return render(request,"payments/success.html")
+def payment_cancel(request):
+    return render(request,"payments/cacel.html")
+def create_checkout_session(request):
+    if request.method == "POST":
+        try:
+            session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                line_items=[
+                    {
+                        "price_data": {
+                            "currency": "usd",
+                            "product_data": {"name": "Example Product"},
+                            "unit_amount": 2000,  # $20.00 in cents
+                        },
+                        "quantity": 1,
+                    },
+                ],
+                mode="payment",
+                success_url="http://127.0.0.1:8000/success/",
+                cancel_url="http://127.0.0.1:8000/cancel/",
+            )
+            return JsonResponse({"id": session.id})
+        except Exception as e:
+            return JsonResponse({"error": str(e)})
+        
+        
 
 def Undefine(request, undefined_path):
     return redirect(HomePage)

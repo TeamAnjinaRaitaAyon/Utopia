@@ -1,20 +1,41 @@
-{% extends "BasePage.html" %}
-{% load static %}
-{% block title %}Tickets{% endblock %}
-{% block more-style %}
-
-<link rel="stylesheet" href="{% static '/CSS/TicketPage/Ticket.css' %}">
-{% endblock %}
-{% block content %}
-{% for Ticket in Tickets %}
-<div class="show-details">
-    <span>Document id : {{Ticket.id}}</span><br>
-    <span>Event : {{Ticket.SportName}}</span><br>
-    <span>Place : {{Ticket.SportVenue}}</span><br>
-    <span>Date : {{Ticket.SportDate}}</span><br>
-    <span>TicketType : {{Ticket.SportSeatType}}</span><br>
-    <span>SeatNumber : {{Ticket.SportSeatNumber}}</span><br>
-    <span>Price : {{Ticket.SportTicketPrice}}</span>
+{% extends "BasePage.html" %} {% load static %} {% block title %} Tickets{% endblock %}
+ {% block more-style %}
+<link rel="stylesheet" href="{% static '/CSS/TicketPage/Ticket.css' %}" />
+{% endblock %} {% block content %} {% for ticket in Tickets %}
+<div class="ticket-details">
+  <div class="ticket-header">
+    <h2>Ticket for: {{ ticket.event_name }}</h2>
+    <p>
+      <strong>Event Date:</strong> {{ ticket.event_date|date:"D, d M Y H:i" }}
+    </p>
+    <!-- Event date and time -->
+  </div>
+  <div class="ticket-info">
+    <p><strong>Match Details:</strong> {{ ticket.match_details }}</p>
+    <!-- Match details -->
+    <p><strong>Sport Type:</strong> {{ ticket.sport_type }}</p>
+    <!-- Sport type -->
+    <p><strong>Venue:</strong> {{ ticket.venue }}</p>
+    <!-- Venue -->
+    <p><strong>City:</strong> {{ ticket.city }}</p>
+    <!-- City -->
+    <p><strong>Country:</strong> {{ ticket.country }}</p>
+    <!-- Country -->
+    <p>
+      <strong>Selected Seats:</strong> {{ ticket.selected_seats|join:", " }}
+    </p>
+    <!-- Seats -->
+    <p class="seat-price">
+      <strong>Total Price:</strong> <span>{{ ticket.total_price }} BDT</span>
+    </p>
+    <!-- Total price -->
+    <p class="purchase-date">
+      <strong>Purchase Date:</strong> {{ ticket.purchase_date|date:"D, d M Y H:i" }}
+    </p>
+    <!-- Purchase timestamp -->
+  </div>
+  <div class="ticket-image">
+    <img src="{{ ticket.event_image.url }}" alt="Event Image" />
+  </div>
 </div>
-{% endfor %}
-{% endblock %}
+{% endfor %} {% endblock %}

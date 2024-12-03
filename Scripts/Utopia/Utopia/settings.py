@@ -29,8 +29,21 @@ SECRET_KEY = 'django-insecure-_9wtnd4#79v_y&ze59qblzgfpqt9gh@$pa^bw+uq-&r*$q*c(k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.ngrok-free.app' , 'utopia-bd.duckdns.org']
 
+CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app', 'http://*.ngrok-free.app']
+
+# settings.py
+STRIPE_PUBLISHABLE_KEY = "pk_test_51OLUfpKzXKY3sLkDXp73zhWxeXpPFIqLbsifIrOo5UnkwMlqqZQ03vQEBTlHTgFDumzDJdRnfGg5iOfHA3qhKU5b00K1Z8b3nC"
+STRIPE_SECRET_KEY = "sk_test_51OLUfpKzXKY3sLkD89gFdsljH4ZHAyCte6tYqH43eXu8R3sGSJe7cnUy91XfWofjr3ZWFfYvXaHSHrgnaX8vySlS00hVktsSQA"
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+STRIPE_TEST_API_KEY = os.getenv("STRIPE_TEST_API_KEY")
+STRIPE_LIVE_API_KEY = os.getenv("STRIPE_LIVE_API_KEY")
 
 # Application definition
 
@@ -55,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'Utopia.urls'
 

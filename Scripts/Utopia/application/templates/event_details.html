@@ -1,44 +1,6 @@
-{% extends 'BasePage.html' %} {% block content %}
-<div class="event-container">
-  <h1>{{ event.event_name }}</h1>
-  <p><strong>Type:</strong> {{ event.sport_type }}</p>
-  <p><strong>Match Details:</strong> {{ event.match_details }}</p>
-  <p><strong>Event Date:</strong> {{ event.event_date }}</p>
-  <p><strong>Venue:</strong> {{ event.venue }}</p>
-  <p><strong>City:</strong> {{ event.city }}</p>
-  <p><strong>Country:</strong> {{ event.country }}</p>
+{% extends 'BasePage.html' %}
 
-  {% if event.event_image %}
-  <img src="{{ event.event_image.url }}" alt="Event Image" />
-  {% else %}
-  <p>No event image available</p>
-  {% endif %}
-
-  <p><strong>Seats:</strong></p>
-
-  <div id="seatsContainer">
-    <!-- Loop through the seats and display them as small boxes -->
-    {% for seat, details in event.seats.items %}
-    <div
-      class="seat-box"
-      id="seat-{{ seat }}"
-      data-seat="{{ seat }}"
-      data-price="{{ details.price }}"
-      class="{% if details.available %}available{% else %}unavailable{% endif %}"
-    >
-      {{ seat }}
-      <!-- Display seat number inside the box -->
-    </div>
-    {% endfor %}
-  </div>
-
-  <!-- Selected Seats Display -->
-  <div class="seats-info">
-    <p><strong>Selected Seats:</strong> <span id="selectedSeats">None</span></p>
-    <p><strong>Total Price:</strong> $<span id="totalPrice">0.00</span></p>
-  </div>
-</div>
-{% endblock %} {% block more-style %}
+{% block content %}
 <style>
   /* Center everything */
   .event-container {
@@ -50,8 +12,7 @@
     margin-top: 20px;
   }
 
-  h1,
-  p {
+  h1, p {
     margin: 10px;
   }
 
@@ -95,8 +56,134 @@
     max-width: 100%;
     height: auto;
   }
+
+  /* Neumorphic button styling */
+  .neumorphic-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-bottom: 30px;
+    width: 200px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    background: #c5ef0a;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 8px 8px 15px #bebebe, -8px -8px 15px #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .neumorphic-button:active {
+    box-shadow: inset 8px 8px 15px #bebebe, inset -8px -8px 15px #ffffff;
+  }
+
+  .neumorphic-button:hover {
+    background: #d6d6d6;
+  }
+
+  /* Neumorphic Alert Styling */
+  .neumorphic-alert {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    visibility: hidden;
+  }
+
+  .alert-box {
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 8px 8px 15px #bebebe, -8px -8px 15px #ffffff;
+    text-align: center;
+    width: 300px;
+    font-size: 18px;
+    color: #333;
+  }
+
+  .alert-box button {
+    padding: 10px 20px;
+    margin-top: 20px;
+    background-color: #c5ef0a;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 8px 8px 15px #bebebe, -8px -8px 15px #ffffff;
+  }
+
+  .alert-box button:active {
+    box-shadow: inset 8px 8px 15px #bebebe, inset -8px -8px 15px #ffffff;
+  }
+
+  .alert-box button:hover {
+    background-color: #d6d6d6;
+  }
+
+  /* Show the alert */
+  .show-alert {
+    visibility: visible;
+  }
 </style>
-{% endblock %} {% block more-script %}
+
+<div class="event-container">
+  <h1>{{ event.event_name }}</h1>
+  <p><strong>Type:</strong> {{ event.sport_type }}</p>
+  <p><strong>Match Details:</strong> {{ event.match_details }}</p>
+  <p><strong>Event Date:</strong> {{ event.event_date }}</p>
+  <p><strong>Venue:</strong> {{ event.venue }}</p>
+  <p><strong>City:</strong> {{ event.city }}</p>
+  <p><strong>Country:</strong> {{ event.country }}</p>
+
+  {% if event.event_image %}
+  <img src="{{ event.event_image.url }}" alt="Event Image" />
+  {% else %}
+  <p>No event image available</p>
+  {% endif %}
+
+  <p><strong>Seats:</strong></p>
+
+  <div id="seatsContainer">
+    {% for seat, details in event.seats.items %}
+    <div
+      class="seat-box {% if details.available %} available {% else %} unavailable {% endif %}"
+      id="seat-{{ seat }}"
+      data-seat="{{ seat }}"
+      data-price="{{ details.price }}">
+      {{ seat }}
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Selected Seats Display -->
+  <div class="seats-info">
+    <p><strong>Selected Seats:</strong> <span id="selectedSeats">None</span></p>
+    <p><strong>Total Price:</strong> ৳ <span id="totalPrice">0.00</span></p>
+  </div>
+
+  <!-- Form to submit the data -->
+  <form id="bookingForm" method="POST" action="{% url 'event_details' event.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="selectedSeats" id="hiddenSelectedSeats" />
+    <input type="hidden" name="totalPrice" id="hiddenTotalPrice" />
+    <button type="submit" class="neumorphic-button" id="submitButton">Buy</button>
+  </form>
+
+  <!-- Neumorphic Alert Modal -->
+  <div class="neumorphic-alert" id="neumorphicAlert">
+    <div class="alert-box">
+      <p>No seat selected. Please select a seat before proceeding.</p>
+      <button id="closeAlertButton">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     let selectedSeats = [];
@@ -108,31 +195,47 @@
         let seatId = seatBox.getAttribute("data-seat");
         let seatPrice = parseFloat(seatBox.getAttribute("data-price"));
 
-        // Check if seat is available (green)
         if (seatBox.classList.contains("available")) {
-          seatBox.classList.remove("available"); // Remove 'available' class
-          seatBox.classList.add("unavailable"); // Change to unavailable (red)
+          seatBox.classList.remove("available");
+          seatBox.classList.add("unavailable");
           selectedSeats.push(seatId);
           totalPrice += seatPrice;
-        }
-        // If it's already selected (blue), deselect it and make it available again
-        else if (
-          seatBox.classList.contains("unavailable") &&
-          selectedSeats.includes(seatId)
-        ) {
-          seatBox.classList.remove("unavailable"); // Change back to red
-          seatBox.classList.add("available"); // Turn it green (available)
-          selectedSeats = selectedSeats.filter((seat) => seat !== seatId); // Remove from selected list
-          totalPrice -= seatPrice; // Adjust total price
+        } else if (seatBox.classList.contains("unavailable")) {
+          seatBox.classList.remove("unavailable");
+          seatBox.classList.add("available");
+          selectedSeats = selectedSeats.filter(seat => seat !== seatId);
+          totalPrice -= seatPrice;
         }
 
-        // Update UI with selected seats and total price
+        // Update UI
         document.getElementById("selectedSeats").textContent =
           selectedSeats.join(", ") || "None";
         document.getElementById("totalPrice").textContent =
           totalPrice.toFixed(2);
+
+        // Update form hidden fields
+        document.getElementById("hiddenSelectedSeats").value =
+          JSON.stringify(selectedSeats);
+        document.getElementById("hiddenTotalPrice").value = totalPrice.toFixed(2);
       });
+    });
+
+    // Handle form submission
+    document.getElementById("submitButton").addEventListener("click", function (event) {
+      if (selectedSeats.length === 0) {
+        event.preventDefault(); // Prevent form submission
+        document.getElementById("neumorphicAlert").classList.add("show-alert"); // Show neumorphic alert
+      } else {
+        // Proceed with payment gateway redirection
+        document.getElementById("bookingForm").submit();
+      }
+    });
+
+    // Close alert when button is clicked
+    document.getElementById("closeAlertButton").addEventListener("click", function () {
+      document.getElementById("neumorphicAlert").classList.remove("show-alert"); // Hide alert
     });
   });
 </script>
+
 {% endblock %}
