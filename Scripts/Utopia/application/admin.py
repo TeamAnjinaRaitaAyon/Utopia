@@ -13,8 +13,9 @@ admin.site.register(PublicOpinions)
 #entertainment
 admin.site.register(SportsEvent)
 admin.site.register(Ticket)
-#HealthCare
 
+#HealthCare
+admin.site.register(VisitingTicket)
 admin.site.register(Hospital)
 admin.site.register(HealthIssue)
 admin.site.register(Doctor)

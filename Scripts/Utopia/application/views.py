@@ -494,7 +494,6 @@ stripe.api_key = settings.STRIPE_TEST_API_KEY
 @login_required
 def event_details(request, event_id):
     event = get_object_or_404(SportsEvent, pk=event_id)
-
     if request.method == 'POST':
         # Get the selected seats and total price from the POST data
         selected_seats = json.loads(request.POST.get('selectedSeats', '[]'))
@@ -623,6 +622,25 @@ def stripe_webhook(request):
 from django.shortcuts import render, get_object_or_404
 from .models import Ticket
 
+@login_required
+def VisitingTickets(request):
+    ticket_id = request.GET.get('ticket_id')
+    if request.method == 'POST':
+       return redirect(HomePage)
+    print(ticket_id)
+    if ticket_id:
+        # Retrieve the ticket using the ID from the URL
+        try:
+            ticket = VisitingTicket.objects.get(id=ticket_id)
+        except VisitingTicket.DoesNotExist:
+            ticket = None
+    else:
+        ticket = None
+
+    return render(request, 'visiting_ticket.html', {'ticket': ticket})
+
+
+
 def SportTicket(request):
     # Get the list of ticket IDs from the query parameters
     ticket_ids = request.GET.get('ticket_ids', '')
@@ -644,16 +662,85 @@ def SportTicket(request):
 
     # Render the template with the tickets
     return render(request, 'SportTicket.html', {'tickets': tickets})
-
-
 # sports finish
 
 #HealthCare Start 
 from .models import HealthIssue
 @login_required(login_url='EntryPage')
 def HealthcareMain(request):
+    if request.method == 'POST':
+        health_issue=request.POST.get('HealthIssue')
+        total_price=1000
+        username=UsersPrimaryDetails.objects.get(UserID=str(request.user.username))
+        health_issue_name=HealthIssue.objects.get(id=health_issue)
+        hospitalType = request.POST.get('HospitalType')
+        hospital=request.POST.get('Hospital')
+        hospital_name=Hospital.objects.get(id=hospital)
+        doctor=request.POST.get('Doctor')
+        doctor_name=Doctor.objects.get(id=doctor)
+        visitingHour=request.POST.get('VisitingHour')
+        session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[
+        {
+            'price_data': {
+                'currency': 'bdt',
+                'product_data': {
+                    'name': f'Patient Name : {username.UserFullName}',
+                    'description': (
+                        f"Health_issue: {health_issue_name}\n"
+                        f"HospitalType: {hospitalType}\n"
+                        f"Hospital: {hospital_name}\n"
+                        f"Doctor: {doctor_name}\n"
+                        f"VisitingHour: {visitingHour}"
+                    ),
+                },
+                'unit_amount': int(total_price * 100) ,# Amount in smallest currency unit
+            },
+            "quantity": 1,
+        },
+    ],
+    mode='payment',
+    success_url=f"{request.build_absolute_uri('/success_healthcare/')}?session_id={{CHECKOUT_SESSION_ID}}",
+    cancel_url=request.build_absolute_uri('/payment-cancelled/'),
+    metadata={
+        'username':(username.UserFullName),
+        'total_price':(total_price),
+        'health_issue_name':(health_issue_name),
+        'hospital_type':(hospitalType),
+        'hospital_name':(hospital_name),
+        'doctor_name':(doctor_name),
+        'visiting_hour':(visitingHour),
+    }
+    )  
+        # Redirect to Stripe Checkout pa
+        return redirect(session.url, code=303)
     health_issues = HealthIssue.objects.all()
     return render(request, 'Healthcare/HealthcareMain.html', {'health_issues': health_issues})
+@login_required
+def payment_success_healthcare(request):
+    session_id = request.GET.get('session_id')
+    session = stripe.checkout.Session.retrieve(session_id)
+    print(session.payment_status)
+    
+    if session.payment_status == 'paid':
+        # Create the VisitingTicket object
+        ticket = VisitingTicket.objects.create(
+            username=session.metadata['username'],
+            total_price=session.metadata['total_price'],
+            health_issue_name=session.metadata['health_issue_name'],
+            hospital_type=session.metadata['hospital_type'],
+            hospital_name=session.metadata['hospital_name'],
+            doctor_name=session.metadata['doctor_name'],
+            visiting_hour=session.metadata['visiting_hour'],
+        )
+
+        # Redirect to VisitingTickets page with the ticket id in the URL
+        return redirect(f'/VisitingTickets/?ticket_id={ticket.id}')
+    
+    return render(request, 'success.html')
+
+
 from django.http import JsonResponse
 from .models import HealthIssue, Hospital, Doctor
 
@@ -829,7 +916,7 @@ def create_checkout_session(request):
                 line_items=[
                     {
                         "price_data": {
-                            "currency": "usd",
+                            "currency": "bdt",
                             "product_data": {"name": "Example Product"},
                             "unit_amount": 2000,  # $20.00 in cents
                         },

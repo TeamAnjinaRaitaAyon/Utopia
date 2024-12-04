@@ -385,3 +385,63 @@ OKLogged-in User's Username: 1234
 [03/Dec/2024 18:29:37] "GET /favicon.ico/ HTTP/1.1" 302 0
 [03/Dec/2024 18:29:37] "GET /HomePage HTTP/1.1" 302 0
 [03/Dec/2024 18:29:38] "GET /EntryPage/?next=/HomePage HTTP/1.1" 200 4562
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 03, 2024 - 23:40:26
+Django version 4.2.11, using settings 'Utopia.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100     2    0     2    0     0      1      0 --:--:--  0:00:01 --:--:--     1
+OK[03/Dec/2024 23:40:52] "GET / HTTP/1.1" 200 2059
+[03/Dec/2024 23:40:53] "GET /static/CSS/WelcomePage.css HTTP/1.1" 200 2915
+[03/Dec/2024 23:40:53] "GET /static/MEDIA/IMAGE/utopialogo.png HTTP/1.1" 200 35789
+[03/Dec/2024 23:40:53] "GET /static/MEDIA/IMAGE/puzzle.png HTTP/1.1" 200 17588
+[03/Dec/2024 23:40:53] "GET /static/MEDIA/IMAGE/infrastructure.png HTTP/1.1" 200 25272
+[03/Dec/2024 23:40:53] "GET /static/MEDIA/IMAGE/healthcare.png HTTP/1.1" 200 22188
+[03/Dec/2024 23:40:53] "GET /static/MEDIA/IMAGE/Home.png HTTP/1.1" 200 533147
+[03/Dec/2024 23:40:53] "GET /static/MEDIA/IMAGE/voting-box.png HTTP/1.1" 200 4608
+[03/Dec/2024 23:40:53] "GET /static/MEDIA/IMAGE/Background.jpg HTTP/1.1" 200 19448
+[03/Dec/2024 23:40:53] "GET /favicon.ico HTTP/1.1" 301 0
+[03/Dec/2024 23:40:54] "GET /favicon.ico/ HTTP/1.1" 302 0
+[03/Dec/2024 23:40:54] "GET /HomePage HTTP/1.1" 302 0
+[03/Dec/2024 23:40:54] "GET /EntryPage/?next=/HomePage HTTP/1.1" 200 4562
+[03/Dec/2024 23:40:56] "GET /EntryPage HTTP/1.1" 301 0
+[03/Dec/2024 23:40:56] "GET /EntryPage/ HTTP/1.1" 200 4562
+[03/Dec/2024 23:40:56] "GET /static/CSS/General/icon.css HTTP/1.1" 200 696
+[03/Dec/2024 23:40:56] "GET /static/CSS/LoginPage/index.css HTTP/1.1" 200 2059
+[03/Dec/2024 23:40:56] "GET /static/CSS/General/message.css HTTP/1.1" 200 223
+[03/Dec/2024 23:40:56] "GET /static/CSS/LoginPage/bubbleAnimation.css HTTP/1.1" 200 700
+[03/Dec/2024 23:40:56] "GET /static/JAVASCRIPT/LoginPage/Info.js HTTP/1.1" 200 194
+[03/Dec/2024 23:40:57] "GET /static/favicon/favicon.ico HTTP/1.1" 200 15406
+[03/Dec/2024 23:40:58] "POST /EntryPage/ HTTP/1.1" 302 0
+[03/Dec/2024 23:40:59] "GET /HomePage HTTP/1.1" 200 3219
+[03/Dec/2024 23:40:59] "GET /static/CSS/BasePage/BasePage.css HTTP/1.1" 200 5412
+[03/Dec/2024 23:40:59] "GET /static/CSS/HomePage.css HTTP/1.1" 200 2695
+[03/Dec/2024 23:40:59] "GET /application/media/1234.jpg HTTP/1.1" 200 22441
+[03/Dec/2024 23:41:01] "GET /ServicePage/ HTTP/1.1" 200 3404
+[03/Dec/2024 23:41:01] "GET /static/CSS/ServicePage.css HTTP/1.1" 200 1237
+[03/Dec/2024 23:41:03] "GET /EntertainmentPage/ HTTP/1.1" 200 24679
+[03/Dec/2024 23:41:04] "GET /static/CSS/EntertainmentPage.css HTTP/1.1" 200 5520
+[03/Dec/2024 23:41:04] "GET /application/media/event_images/cricket.jpg HTTP/1.1" 200 42868
+[03/Dec/2024 23:41:04] "GET /static/JAVASCRIPT/EntertainmentPage/popup.js HTTP/1.1" 200 1054
+[03/Dec/2024 23:41:04] "GET /application/media/event_images/football.jpg HTTP/1.1" 200 114048
+[03/Dec/2024 23:41:04] "GET /application/media/event_images/rugby.jpg HTTP/1.1" 200 34963
+[03/Dec/2024 23:41:04] "GET /application/media/event_images/tennis.jpg HTTP/1.1" 200 35447
+[03/Dec/2024 23:41:06] "GET /event/2/ HTTP/1.1" 200 23599
+[03/Dec/2024 23:41:10] "POST /event/2/ HTTP/1.1" 302 0
+paid
+[03/Dec/2024 23:41:17] "GET /success/?session_id=cs_test_a1kniCnSBsaMjRCddg5C68GI6DRPmoHZBv9wKxj29agoj7ozW1EIpUqe0r HTTP/1.1" 302 0
+this is 107
+[03/Dec/2024 23:41:17] "GET /SportTicket/?ticket_ids=107 HTTP/1.1" 200 3068
+[03/Dec/2024 23:41:18] "GET /static/CSS/EntertainmentPage/SportTicket.css HTTP/1.1" 200 4759
+[03/Dec/2024 23:41:18] "GET /static/CSS/EntertainmentPage/Sport.png HTTP/1.1" 200 1365352
+this is 107
+[03/Dec/2024 23:41:20] "POST /SportTicket/?ticket_ids=107 HTTP/1.1" 302 0
+Logged-in User's Username: 1234
+[03/Dec/2024 23:41:20] "GET /TicketsPage/ HTTP/1.1" 200 85295
+[03/Dec/2024 23:41:20] "GET /static/CSS/TicketPage/Ticket.css HTTP/1.1" 200 2040

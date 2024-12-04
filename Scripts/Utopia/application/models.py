@@ -137,6 +137,42 @@ class Ticket(models.Model):
 
 from django.core.exceptions import ValidationError  # Import Vali
 
+from django.db import models
+
+# Assuming these are your models:
+# UsersPrimaryDetails, HealthIssue, Hospital, Doctor
+
+from django.db import models
+import random
+import string
+
+# Function to generate a custom ticket ID (unique and random)
+def generate_ticket_id():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+
+class VisitingTicket(models.Model):
+    # Create ticket_id as CharField and make it unique
+    ticket_id = models.CharField(max_length=10, unique=True, editable=False)
+
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)  # Price for the visit
+    username = models.CharField(max_length=255)  # Store the username directly as a string
+    health_issue_name = models.CharField(max_length=255)  # Store health issue name as a string
+    hospital_type = models.CharField(max_length=50)  # Type of hospital (Public/Private)
+    hospital_name = models.CharField(max_length=255)  # Store hospital name as a string
+    doctor_name = models.CharField(max_length=255)  # Store doctor name as a string
+    visiting_hour = models.CharField(max_length=50)  # Store the selected visiting hour (e.g., "10:00 AM")
+
+    # Overriding the save method to auto-generate the ticket_id
+    def save(self, *args, **kwargs):
+        if not self.ticket_id:  # Only generate ticket_id if it isn't already set
+            self.ticket_id = generate_ticket_id()  # Assign generated ticket ID
+        super().save(*args, **kwargs)  # Call the parent save method to save the object
+
+    def __str__(self):
+        return f"Ticket ID: {self.ticket_id} for {self.username} - {self.health_issue_name}"
+
+
+
 class HealthIssue(models.Model):
     name = models.CharField(max_length=255, unique=True)
     

@@ -50,6 +50,7 @@ urlpatterns = [
     path('get_hospitals/', views.get_hospitals, name='get_hospitals'),
     path('get_doctors/', views.get_doctors, name='get_doctors'),
     path('get_visiting_hours/', views.get_visiting_hours, name='get_visiting_hours'),
+    path('VisitingTickets/',views.VisitingTickets,name='VisitingTickets'),
     
     
     path('ThankYou', views.ThankYou, name='ThankYou'),
@@ -60,6 +61,7 @@ urlpatterns = [
     path("payment-page/", views.payment_page, name="payment_page"),
     path("create-checkout-session/", views.create_checkout_session, name="create_checkout_session"),
     path("success/", views.payment_success, name="payment_success"),
+    path("success_healthcare/", views.payment_success_healthcare, name="payment_success_healthcare"),
     path("cancel/", views.payment_cancel, name="payment_cancel"),
     path('stripe-webhook/', views.stripe_webhook, name='stripe_webhook'),
     path('<path:undefined_path>/', views.Undefine),

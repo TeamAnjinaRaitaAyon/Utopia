@@ -1,0 +1,279 @@
+@import url("https://fonts.googleapis.com/css2?family=Staatliches&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: "Staatliches", cursive;
+  background: #01d0ff;
+  color: black;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  justify-content: flex-start;
+  align-items: center;
+  max-width: 1500px;
+}
+
+.user-tickets {
+  width: 100%;
+  max-width: 1200px;
+  box-sizing: border-box;
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: calc(
+    100vh - 100px
+  ); /* Ensure the container doesn't exceed viewport height */
+}
+
+h2 {
+  text-align: center;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.ticket {
+  display: flex;
+  background: white;
+  width: 100%;
+  max-width: 100000px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.left {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.image {
+  height: 100%;
+  width: 250px;
+  background-image: url("visiting.jpg");
+  background-size: contain;
+  opacity: 0.85;
+}
+
+.admit-one {
+  position: absolute;
+  color: rgb(114, 108, 108);
+  height: 250px;
+  padding: 0 10px;
+  letter-spacing: 0.15em;
+  display: flex;
+  text-align: center;
+  justify-content: space-around;
+  writing-mode: vertical-rl;
+  transform: rotate(-180deg);
+}
+
+.admit-one span:nth-child(2) {
+  color: rgb(28, 28, 28);
+  font-weight: 700;
+}
+
+.ticket-number {
+  height: 250px;
+  width: 140000px !important;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 5px;
+  color: gray;
+}
+
+.ticket-info {
+  padding: 10px 30px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date {
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+  font-weight: 700;
+  display: flex;
+  max-width: 100%;
+}
+
+.date span {
+  width: 100px;
+}
+
+.date span:first-child {
+  text-align: left;
+}
+
+.date span:last-child {
+  text-align: right;
+}
+
+.date .june-29 {
+  color: #d83565;
+  font-size: 20px;
+}
+
+.show-name {
+  font-size: 20px;
+  font-family: "Nanum Pen Script", cursive;
+  color: #d83565;
+}
+
+.show-name h1 {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #4a437e;
+}
+
+.time {
+  padding: 10px 0;
+  color: #4a437e;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.time span {
+  font-weight: 400;
+  color: gray;
+}
+
+.location {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding-top: 8px;
+  max-width: 500px;
+  border-top: 1px solid gray;
+}
+
+.location .separator {
+  font-size: 20px;
+}
+
+.right {
+  max-width: 250px;
+  border-left: 1px dashed #404040;
+  padding: 15px;
+  display: inline;
+  flex-direction: column;
+  align-items: center;
+}
+
+.right .admit-one {
+  color: darkgray;
+}
+
+.right .admit-one span:nth-child(2) {
+  color: gray;
+}
+
+.right .show-name h1 {
+  font-size: 18px;
+}
+
+.right .right-info-container {
+  height: 250px;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.barcode {
+  height: 80px;
+  width: 100%;
+  overflow: hidden;
+  display: contents;
+  justify-content: center;
+  align-items: center;
+}
+
+.barcode img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.ticket-number {
+  color: gray;
+}
+
+.greet {
+  font-size: xx-large;
+  font-weight: 1000;
+  word-wrap: break-word;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.one {
+  width: 100px;
+  height: 40px;
+  margin: 10px auto;
+  justify-content: center;
+  display: block;
+  color: #fff;
+  background-color: #0a070f;
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 20px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  transition: 0.2s ease-in;
+  cursor: pointer;
+}
+
+.one:hover {
+  background-color: #05f134;
+}
+
+/* Neumorphic back button style */
+.back-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin: 30px;
+}
+
+.back-button button {
+  padding: 12px 20px;
+  font-size: 50px;
+  font-weight: bold;
+  color: #4a437e;
+  background: #d9d9d9;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 6px 6px 10px rgba(153, 153, 153, 0.4),
+    -6px -6px 10px rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-button button:hover {
+  background: #f4f4f4;
+  box-shadow: 3px 3px 8px rgba(153, 153, 153, 0.6),
+    -3px -3px 8px rgba(255, 255, 255, 0.8);
+}
+
+.back-button button:active {
+  background: #e0e0e0;
+  box-shadow: inset 2px 2px 4px rgba(153, 153, 153, 0.7),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}

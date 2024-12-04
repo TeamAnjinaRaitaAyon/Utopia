@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="{% static 'CSS/EntertainmentPage/vistingTicket.css' %}"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static 'favicon/favicon.ico' %}"
+    />
+    <title>SportsTicket-Utopia</title>
+  </head>
+
+  <body>
+    <div class="user-tickets">
+      <h2>Your Visiting Ticket</h2>
+      <!-- Loop over the tickets -->
+      <div class="ticket">
+        <div class="left">
+          <div class="image">
+            <p class="admit-one">
+              <span>Health</span>
+              <span>Utopia</span>
+              <span>Health</span>
+            </p>
+            <div class="ticket-number">
+              <p>
+                Ticket ID : {{ ticket.ticket_id}}
+                <!-- Display user ID from Ticket -->
+              </p>
+            </div>
+          </div>
+          <div class="ticket-info">
+            <div class="show-name">
+              <h1>The Health Problem is <br />{{ ticket.health_issue_name }}</h1>
+              <!-- Event city -->
+              <!-- Sport type -->
+            </div>
+            <p class="location">
+              <span>{{ ticket.hospital_type }}</span>
+              <!-- Venue name -->
+              <span class="separator"><i class="far fa-smile"></i></span>
+              <span>{{ ticket.hospital_name }}</span>
+              <!-- City -->
+            </p>
+          </div>
+        </div>
+        <div class="right">
+          <div class="right-info-container">
+            <div class="show-name">
+              <h1>{{ ticket.doctor_name }}</h1>
+              <!-- Ticket ID -->
+            </div>
+            <div class="barcode">
+              <img src="{% static 'MEDIA/IMAGE/disease.jpg' %}" alt="" />
+            </div>
+            <p class="ticket-number">
+              Visiting Hour : {{ ticket.visiting_hour}}
+              <!-- Seat(s) -->
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button to go back to the previous page -->
+    <div class="back-button">
+      <form action="" method="POST">
+        {% csrf_token %}
+        <button>Go Back</button>
+      </form>
+    </div>
+
+    <div class="greet">
+      <p>
+        God is With You<br />Get Well Soon.
+      </p>
+    </div>
+  </body>
+</html>
