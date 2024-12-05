@@ -1,0 +1,81 @@
+/* General Styles for Neumorphism */
+body {
+    background-color: #e0e0e0; /* Light gray background */
+    font-family: 'Arial', sans-serif;
+    color: #555; /* Dark gray text color */
+    margin: 0;
+    padding: 20px;
+}
+
+/* Main Container */
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height */
+}
+
+/* Contents Box with Neumorphism Effect */
+.contents {
+    background-color: #ffffff; /* White background for the contents */
+    box-shadow: 8px 8px 20px rgba(150, 150, 150, 0.2), -8px -8px 20px rgba(255, 255, 255, 0.9); /* Neumorphism shadow */
+    border-radius: 20px; /* Rounded corners */
+    padding: 20px;
+    width: 500px; /* Set width */
+}
+
+/* Label Styling */
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px; /* Same font size as you used */
+    color: #777; /* Light gray text */
+}
+
+/* Neumorphism Style for Select Boxes */
+select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px; /* Rounded corners */
+    background: #f0f0f0; /* Light gray background for select */
+    border: none;
+    font-size: 14px; /* Font size */
+    color: #555; /* Dark text color for better readability */
+    box-shadow: inset 5px 5px 10px rgba(150, 150, 150, 0.2), inset -5px -5px 10px rgba(255, 255, 255, 0.9); /* Neumorphic inset shadow */
+    transition: all 0.3s ease;
+}
+
+select:focus {
+    outline: none;
+    background-color: #ffffff; /* White background on focus */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Shadow on focus */
+}
+
+/* Neumorphism Style for Button */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none;
+    border-radius: 12px; /* Rounded corners */
+    font-size: 16px; /* Slightly larger font size */
+    cursor: pointer;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(255, 255, 255, 0.3); /* Neumorphic shadow */
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2), -4px -4px 12px rgba(255, 255, 255, 0.4); /* Darker shadow on hover */
+}
+
+/* Style for Popup Container */
+.popup {
+    width: 100%;
+}
+
+
+

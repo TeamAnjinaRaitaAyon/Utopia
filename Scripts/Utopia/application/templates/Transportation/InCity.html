@@ -1,159 +1,175 @@
-{% extends "BasePage.html" %} {% load static %} {% block title %} Transportation
- {% endblock %} {% block more-style %}
-<link rel="stylesheet" href="{% static '/CSS/HealthcareMain.css' %}" />
-{% endblock %} {% block content %}
+{% extends "BasePage.html" %}
+{% load static %}
+{% block title %}Transportation{% endblock %}
+{% block more-style %}
+<link rel="stylesheet" href="{% static '/CSS/City.css' %}" />
+{% endblock %}
+{% block content %}
 <div class="main">
   <div class="contents">
     <div class="container popup" id="PopupHealthcare">
       <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+        <label for="city">City</label>
+        <select id="city" name="city">
+          <option selected>Choose City</option>
+          {% for city in CityList %}
+            <option value="{{ city.id }}">{{ city.name }}</option>
+          {% endfor %}
+        </select>
 
-        <div class="content">
-          <div class="input-box">
-            <label for="city">City</label>
-            <select name="city" id="city">
-              <option selected>Select The City</option>
-              {% for city in CityList %}
-              <option value="{{ city.id }}">{{ city.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
+        <label for="location">Location</label>
+        <select id="location" name="location">
+          <option selected>Choose Location</option>
+        </select>
 
-          <div class="input-box">
-            <label for="location">Select Your Location</label>
-            <select name="location" id="location">
-              <option selected>Choose Location</option>
-            </select>
-          </div>
+        <label for="destination">Destination</label>
+        <select id="destination" name="destination">
+          <option selected>Choose Destination</option>
+        </select>
 
-          <div class="input-box">
-            <label for="destination">Choose Destination</label>
-            <select name="destination" id="destination">
-              <option selected>Choose Destination</option>
-            </select>
-          </div>
-
-          <!-- Visiting Hour -->
-          <div class="input-box">
-            <label for="price">Select Your Vehicle</label>
-            <select name="price" id="price">
-              <option selected>Choose Vehicle</option>
-            </select>
-          </div>
-        </div>
+        <label for="vehicle">Vehicle Type</label>
+        <select id="vehicle" name="vehicle">
+          <option selected>Choose Vehicle</option>
+          <option value="Bike">Bike</option>
+          <option value="Car">Car</option>
+          <option value="Bus">Bus</option>
+        </select>
 
         <div class="button-container">
-          <button type="submit" name="save" value="confirm">
-            Confirm Ride
-          </button>
+          <button id="nextButton" type="button">Next</button>
         </div>
+        <!-- Error message container -->
+        <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
       </form>
+    </div>
+
+    <!-- Ride Table Container (hidden by default) -->
+    <div id="rideTableModal" class="modal">
+      <div class="modal-content"></div>
     </div>
   </div>
 </div>
+<!-- Modal for Available Rides -->
+<div id="rideTableModal" class="modal">
+  <div class="modal-content">
+    <!-- Available rides content will be inserted here dynamically -->
+  </div>
+</div>
 
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-  integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
-></script>
+<!-- Modal for Ride Details -->
+<div id="rideDetailsModal" class="modal">
+  <div class="modal-content">
+    <!-- Ride details content will be inserted here dynamically -->
+  </div>
+</div>
+
+
+<!-- jQuery CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
   $(document).ready(function () {
-    // Trigger when HealthIssue is selected
+    // Fetch locations based on city
     $("#city").change(function () {
-      var city = $(this).val();
-      var location = $("#location").val();
+      var cityId = $(this).val();
       $.ajax({
-        url: '{% url "get_locations" %}',
-        data: {
-          city: city,
-        },
+        url: "{% url 'get_locations' %}",
+        data: { city: cityId },
         success: function (response) {
-          $("#location").empty();
-          $("#location").append("<option selected>Choose Location</option>");
-          response.location.forEach(function (location) {
-            $("#location").append(
-              '<option value="' +
-                location.id+
-                '">' +
-                location.name+
-                "</option>"
-            );
+          $("#location").empty().append("<option selected>Choose Location</option>");
+          response.locations.forEach(function (location) {
+            $("#location").append(`<option value="${location.id}">${location.name}</option>`);
           });
         },
       });
     });
 
-    // Trigger when HospitalType is selected
+    // Fetch destinations based on location
     $("#location").change(function () {
-      var location = $(this).val();
-      var destination = $("#destination").val();
-
-      // Fetch hospitals based on Hospital Type
+      var locationId = $(this).val();
       $.ajax({
-        url: '{% url "get_destination" %}',
-        data: {
-          location:location,
-        },
+        url: "{% url 'get_destinations' %}",
+        data: { location: locationId },
         success: function (response) {
-          $("#destination").empty();
-          $("#destination").append("<option selected>Choose Destination</option>");
-          response.destination.forEach(function (destination) {
-            $("#destination").append(
-              '<option value="' +
-                destination.id +
-                '">' +
-                destination.name +
-                "</option>"
-            );
+          $("#destination").empty().append("<option selected>Choose Destination</option>");
+          response.destinations.forEach(function (destination) {
+            $("#destination").append(`<option value="${destination.id}">${destination.name}</option>`);
           });
         },
       });
     });
 
-    // Trigger when Hospital is selected
-    $("#destination").change(function () {
-      var destination = $(this).val();
-      var price = $("#price").val();
+    // Handle Next button click
+    $("#nextButton").click(function (event) {
+      event.preventDefault(); // Prevent default form submission
 
-      // Fetch doctors based on selected hospital
+      var formData = {
+        city: $("#city").val(),
+        location: $("#location").val(),
+        destination: $("#destination").val(),
+        vehicle: $("#vehicle").val(),
+        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+      };
+
+      // Validate form fields
+      if (!formData.city || !formData.location || !formData.destination || !formData.vehicle) {
+        $("#errorMessage").text("Please fill all fields.");
+        return;
+      }
+
       $.ajax({
-        url: '{% url "get_doctors" %}',
-        data: {
-          destination:destination
-        },
+        url: "{% url 'show_available_rides' %}",
+        method: "POST",
+        data: formData,
         success: function (response) {
-          $("#price").empty();
-          $("#price").append("<option selected>Choose Vehicle</option>");
-          response.price.forEach(function (price) {
-            $("#price").append(
-              '<option value="' + price.id + '">' + price.name + "</option>"
-            );
-          });
+          if (response.error) {
+            $("#errorMessage").text(response.error);
+          } else {
+            $("#errorMessage").empty();
+            $("#PopupHealthcare").hide(); // Hide the first popup
+            $("#rideTableModal").show(); // Show the second modal
+            $("#rideTableModal .modal-content").html(response.html);
+          }
+        },
+        error: function () {
+          $("#errorMessage").text("An error occurred. Please try again.");
         },
       });
     });
-    // Form submission check for empty fields
-    $("form").submit(function (event) {
-      // Check if any field is empty
-      var city = $("#city").val();
-      var location = $("#location").val();
-      var destination = $("#destination").val();
-      var price = $("#price").val();
 
-      if (
-        !city ||
-        !location ||
-        !destination ||
-        !price
-      ) {
-        event.preventDefault(); // Prevent form submission
-        alert("Please fill all the fields");
+    // Handle "Book Now" button in the available rides modal
+    $(document).on("click", ".bookNowBtn", function () {
+      var rideId = $(this).data("ride-id");
+
+      // Close the ride table modal if open
+      $("#rideTableModal").hide(); 
+
+      $.ajax({
+        url: "{% url 'ride_details' %}",
+        method: "POST",
+        data: {
+          ride_id: rideId,
+          csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+        },
+        success: function (response) {
+          $("#rideDetailsModal").show(); // Show the ride details modal
+          $("#rideDetailsModal .modal-content").html(response.html);
+        },
+        error: function () {
+          alert("An error occurred while fetching ride details.");
+        },
+      });
+    });
+
+    // Hide modals on outside click
+    $(window).click(function (event) {
+      if ($(event.target).is("#rideDetailsModal")) {
+        $("#rideDetailsModal").hide();
       }
     });
   });
 </script>
 
+</body>
 {% endblock %}

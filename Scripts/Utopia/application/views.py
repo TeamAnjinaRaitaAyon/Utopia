@@ -10,6 +10,7 @@ from django.utils.html import strip_tags
 from django.urls import reverse
 from django.conf import Settings
 from django.shortcuts import redirect, get_object_or_404
+from django.template.loader import render_to_string
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.decorators import login_required
@@ -338,14 +339,6 @@ def InCity(request):
     context.update({"CityList": CityList})
     return render(request, 'Transportation/InCity.html',context)
 
-@login_required(login_url='EntryPage')
-def CityToCity(request):
-    return render(request, 'Transportation/CityToCity.html')
-
-@login_required(login_url='EntryPage')
-def CountryToCountry(request):
-    return render(request, 'Transportation/CountryToCountry.html')
-
 
 def get_Location(request):
     city = request.GET.get('city')
@@ -385,81 +378,6 @@ def get_Destination(request):
 
 def get_Price(request):
     return 
-def Clinic(request):
-    return render(request, "Healthcare/Category.html/Clinic.html")
-
-
-def Hospital(request):
-    return render(request, "Healthcare/Category.html/Hospital.html")
-
-
-def Pharmacy(request):
-    return render(request, "Healthcare/Category.html/Pharmacy.html")
-
-
-def Diagnostic(request):
-    return render(request, "Healthcare/Category.html/Diagnostic.html")
-
-
-def Eyeclinic(request):
-    return render(request, "Healthcare/Category.html/Eyeclinic.html")
-
-
-def PublicClinic(request):
-    return render(request, "Healthcare/Clinic.html/PublicClinic.html")
-
-
-def PrivateClinic(request):
-    return render(request, "Healthcare/Clinic.html/PrivateClinic.html")
-
-
-def PublicHospital(request):
-    return render(request, "Healthcare/Hospital.html/PublicHospital.html")
-
-
-def PrivateHospital(request):
-    return render(request, "Healthcare/Hospital.html/PrivateHospital.html")
-
-
-def PrivateDiagnostic(request):
-    return render(request, "Healthcare/Diagnostic.html/PrivateDiagnostic.html")
-
-
-def PublicDiagnostic(request):
-    return render(request, "Healthcare/Diagnostic.html/PublicDiagnostic.html")
-
-
-def PrivateEyeclinic(request):
-    return render(request, "Healthcare/Eyeclinic.html/PrivateEyeclinic.html")
-
-
-def PublicEyeclinic(request):
-    return render(request, "Healthcare/Eyeclinic.html/PublicEyeclinic.html")
-
-
-def HospitalAppointmentPage(request):
-    return render(request, "Healthcare/Hospital.html/HospitalAppointmentPage.html")
-
-
-def PharmacyBookingPage(request):
-    return render(request, "Healthcare/Pharmacy.html/PharmacyBookingPage.html")
-
-
-def DiagnosticAppointmentPage(request):
-    return render(request, "Healthcare/Diagnostic.html/DiagnosticAppointmentPage.html")
-
-
-def ClinicAppointmentPage(request):
-    return render(request, "Healthcare/Clinic.html/ClinicAppointmentPage.html")
-
-
-def EyeclinicAppointmentPage(request):
-    return render(request, "Healthcare/Eyeclinic.html/EyeclinicAppointmentPage.html")
-
-
-def ThankYou(request):
-    return render(request, 'Healthcare/ThankYou.html')
-
 
 @login_required
 def EducationPage(request):
@@ -935,3 +853,287 @@ def create_checkout_session(request):
 
 def Undefine(request, undefined_path):
     return redirect(HomePage)
+
+def get_locations(request):
+    city_id = request.GET.get('city')
+    locations = Location.objects.filter(city_id=city_id)
+    location_list = [{"id": loc.id, "name": loc.name} for loc in locations]
+    return JsonResponse({"locations": location_list})
+
+def get_destinations(request):
+    location_id = request.GET.get('location')
+    destinations = Destination.objects.filter(location_id=location_id).values('id', 'name')
+    return JsonResponse({'destinations': list(destinations)})
+
+def show_available_rides(request):
+    if request.method == "POST":
+        city_id = request.POST.get('city')
+        location_id = request.POST.get('location')
+        destination_id = request.POST.get('destination')
+        vehicle_type = request.POST.get('vehicle')
+        rides = Ride.objects.filter(
+        city_id=city_id,
+        location_id=location_id,
+        destination_id=destination_id,
+        vehicle_type=vehicle_type
+    )
+    if not rides:
+        return JsonResponse({"error": "Sorry, Riders are not avaiable now for your location, please try again later."})
+    ride_table_html = render(request, "ride_table.html", {"rides": rides, "vehicle_type": vehicle_type}).content.decode('utf-8')
+    return JsonResponse({"html": ride_table_html})
+    
+@login_required
+def get_ride_details(request):
+    if request.method == 'POST':
+        ride_id = request.POST.get('ride_id')
+        try:
+            ride = Ride.objects.get(id=ride_id)
+            context = {
+                'ride': ride,
+                'user': request.user,
+            }
+            html = render_to_string('ride_details.html', context)
+            return JsonResponse({'html': html})
+        except Ride.DoesNotExist:
+            return JsonResponse({'error': 'Invalid request'})
+
+def ride_detail(request):
+    if request.method == "POST":
+        ride_id = request.POST.get('ride_id')
+        ride = get_object_or_404(Ride, id=ride_id)
+
+        html = render_to_string('ride_details.html', {
+            'ride': ride,
+             
+        }, request=request)
+        
+        return JsonResponse({'html': html})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_exempt
+def book_ride(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            ride_id = data.get('ride_id')
+            ride = Ride.objects.get(id=ride_id)
+            
+            # Save booking in the database
+            Booking.objects.create(user=request.user, ride=ride, status='confirmed')
+            ride.booked = True
+            ride.save()
+            
+            return JsonResponse({'success': True})
+        except Ride.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Ride not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+def CityToCity(request):
+    if request.user.is_authenticated:
+        return render(request, 'Transportation/CityToCity.html')
+    else:
+        return render(request, 'EntryPage.html')
+    
+
+def findcitytransportation(request):
+        context = {}
+        if request.method == 'POST':
+            source_r = request.POST.get('source')
+            dest_r = request.POST.get('destination')
+            date_r = request.POST.get('date')
+            cityride_list = CityRide.objects.filter(
+                source=source_r, dest=dest_r, date=date_r)
+            if cityride_list:
+                return render(request, 'Transportation/citylist.html', locals())
+            else:
+                context["error"] = "Sorry no ride available"
+                return render(request, 'Transportation/CityToCity.html', context)
+        else:
+            return render(request, 'Transportation/CityToCity.html')
+  
+# View to handle booking a ride
+def citybookings(request):
+    context = {}
+    if request.method == 'POST':
+        id_r = request.POST.get('ride_id')
+        seats_r = int(request.POST.get('no_seats'))
+        cityride = CityRide.objects.get(id=id_r)  
+        if cityride:
+            if cityride.rem > int(seats_r):
+                name_r = cityride.cityride_name
+                cost = int(seats_r) * cityride.price
+                source_r = cityride.source
+                dest_r = cityride.dest
+                nos_r = (cityride.nos)
+                price_r = cityride.price
+                date_r = cityride.date
+                time_r = cityride.time
+                username_r = request.user.username
+                email_r = request.user.email
+                userid_r = request.user.id
+                rem_r = cityride.rem - seats_r
+                CityRide.objects.filter(id=id_r).update(rem=rem_r)
+                citybook = CityBook.objects.create(name=username_r, email=email_r, ride_name=name_r, source=source_r,
+                                           dest=dest_r, price=price_r, nos=seats_r, date=date_r, time=time_r,
+                                           status='BOOKED')
+                print('------------citybook id-----------', citybook.id)
+                # book.save()
+                return render(request, 'Transportation/citybookings.html', locals())
+            else:
+                context["error"] = "Sorry, select fewer number of seats"
+                return render(request, 'Transportation/CityToCity.html', context)
+
+    else:
+        return render(request, 'Transportation/CityToCity.html')
+    
+def cancellings(request):
+    context = {}
+    if request.method == 'POST':
+        id_r = request.POST.get('cityride_id')
+        try:
+            # Retrieve booking and corresponding cityride
+            book = CityBook.objects.get(id=id_r)
+            cityride = CityRide.objects.get(id=book.cityrideid)
+            # Update available seats
+            cityride.rem += book.nos
+            cityride.save()
+            # Cancel booking
+            book.status = 'CANCELLED'
+            book.nos = 0
+            book.save()
+            return redirect('seebookings')  # Redirect to the page where the user can see bookings
+        except CityBook.DoesNotExist:
+            context["error"] = "Booking not found"
+            return render(request, 'Transportation/error.html', context)
+        except CityRide.DoesNotExist:
+            context["error"] = "City ride not found"
+            return render(request, 'Transportation/error.html', context)
+    return render(request, 'Transportation/CityToCity.html')
+
+
+def seebookings(request):
+    context = {}
+    id_r = request.user.id
+    book_list = CityBook.objects.filter(user_id=id_r) 
+    if book_list.exists():
+        context["book_list"] = book_list
+        return render(request, 'Transportation/citybooklist.html', context)
+    else:
+        context["error"] = "Sorry, you have no booked rides."
+        return render(request, 'Transportation/CityToCity.html', context)
+
+
+def CountryToCountry(request):
+    if request.user.is_authenticated:
+        return render(request, 'Transportation/CountryToCountry.html')
+    else:
+        return render(request, 'EntryPage.html')
+    
+
+def findcountrytransportation(request):
+        context = {}
+        if request.method == 'POST':
+            source_r = request.POST.get('source')
+            dest_r = request.POST.get('destination')
+            date_r = request.POST.get('date')
+            countryride_list = CountryRide.objects.filter(
+                source=source_r, dest=dest_r, date=date_r)
+            if countryride_list:
+                return render(request, 'Transportation/countrylist.html', locals())
+            else:
+                context["error"] = "Sorry no rides available"
+                return render(request, 'Transportation/CountryToCountry.html', context)
+        else:
+            return render(request, 'Transportation/CountryToCountry.html')
+  
+# View to handle booking a ride
+def countrybookings(request):
+    context = {}
+    if request.method == 'POST':
+        id_r = request.POST.get('ride_id')
+        seats_r = int(request.POST.get('no_seats'))
+        countryride = CountryRide.objects.get(id=id_r)  
+        if countryride:
+            if countryride.rem > int(seats_r):
+                name_r = countryride.countryride_name
+                cost = int(seats_r) * countryride.price
+                source_r = countryride.source
+                dest_r = countryride.dest
+                nos_r = (countryride.nos)
+                price_r = countryride.price
+                date_r = countryride.date
+                time_r = countryride.time
+                username_r = request.user.username
+                email_r = request.user.email
+                userid_r = request.user.id
+                rem_r = countryride.rem - seats_r
+                CountryRide.objects.filter(id=id_r).update(rem=rem_r)
+                countrybook = CountryBook.objects.create(name=username_r, email=email_r, ride_name=name_r, source=source_r,
+                                           dest=dest_r, price=price_r, nos=seats_r, date=date_r, time=time_r,
+                                           status='BOOKED')
+                print('------------countrybook id-----------', countrybook.id)
+                # countrybook.save()
+                return render(request, 'Transportation/countrybookings.html', locals())
+            else:
+                context["error"] = "Sorry, select fewer number of seats"
+                return render(request, 'Transportation/CountryToCountry.html', context)
+
+    else:
+        return render(request, 'Transportation/CountryToCountry.html')
+    
+def cancellings(request):
+    context = {}
+    if request.method == 'POST':
+        id_r = request.POST.get('countryride_id')
+        try:
+            # Retrieve booking and corresponding cityride
+            book = CountryBook.objects.get(id=id_r)
+            countryride = CountryRide.objects.get(id=book.countryrideid)
+            # Update available seats
+            countryride.rem += book.nos
+            countryride.save()
+            # Cancel booking
+            book.status = 'CANCELLED'
+            book.nos = 0
+            book.save()
+            return redirect('seecountrybookings')  # Redirect to the page where the user can see bookings
+        except CountryBook.DoesNotExist:
+            context["error"] = "Booking not found"
+            return render(request, 'Transportation/error.html', context)
+        except CountryRide.DoesNotExist:
+            context["error"] = "Country ride not found"
+            return render(request, 'Transportation/error.html', context)
+    return render(request, 'Transportation/CountryToCountry.html')
+
+# View to show all bookings made by the user
+def seecountrybookings(request):
+    context = {}
+    id_r = request.user.id
+    book_list = CountryBook.objects.filter(user_id=id_r) 
+    if book_list.exists():
+        context["book_list"] = book_list
+        return render(request, 'Transportation/countrybooklist.html', context)
+    else:
+        context["error"] = "Sorry, you have no booked rides."
+        return render(request, 'Transportation/CountryToCountry.html', context)
+    
+def education_view(request):
+    schools = list(School.objects.values())
+    colleges = list(College.objects.values())
+    universities = list(University.objects.values())
+    
+    context = {
+        'schools': schools,
+        'colleges': colleges,
+        'universities': universities
+    }
+    return render(request, 'EducationPage.html', context)
+
+def ThankYou(request):
+    return render(request, 'Healthcare/ThankYou.html')
+
+def thank_you(request):
+    return render(request, 'Thankyou.html')

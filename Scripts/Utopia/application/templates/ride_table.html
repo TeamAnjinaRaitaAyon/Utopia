@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ride Table</title>
+    <style>
+        /* Container for the table to center it in the middle of the page */
+        .table-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;  /* Keeps it above other content */
+            max-width: 1000px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        /* Transparent neumorphic styled table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.6);  /* Semi-transparent background */
+            box-shadow: 9px 9px 16px rgba(190, 190, 190, 0.5), -9px -9px 16px rgba(255, 255, 255, 0.7);  /* Neumorphism shadow effect */
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);  /* Optional blur effect for transparency */
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.6);  /* Semi-transparent for table cells */
+            box-shadow: inset 4px 4px 8px rgba(190, 190, 190, 0.5), inset -4px -4px 8px rgba(255, 255, 255, 0.7);  /* Neumorphic effect */
+        }
+
+        th {
+            color: #333;
+            box-shadow: inset 4px 4px 8px rgba(190, 190, 190, 0.5), inset -4px -4px 8px rgba(255, 255, 255, 0.7);  /* Neumorphism for header */
+        }
+
+        td {
+            color: #555;
+        }
+
+        .bookNowBtn {
+            background-color: rgba(255, 255, 255, 0.6);  /* Transparent button background */
+            box-shadow: 4px 4px 8px rgba(190, 190, 190, 0.5), -4px -4px 8px rgba(255, 255, 255, 0.7);
+            color: #333;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bookNowBtn:hover {
+            box-shadow: inset 4px 4px 8px rgba(190, 190, 190, 0.5), inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+        }
+
+        .bookNowBtn:active {
+            box-shadow: inset 2px 2px 4px rgba(190, 190, 190, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <!-- Table container for centering -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Time</th>
+                    <th>Cost</th>
+                    {% if vehicle_type == "Bus" %}
+                        <th>Bus Stand</th>
+                        <th>Seats Available</th>
+                    {% elif vehicle_type == "Car" %}
+                        <th>Car Type</th>
+                    {% endif %}
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ride in rides %}
+                    <tr>
+                        <td>{{ ride.id }}</td>
+                        <td>{{ ride.departure_time }}</td>
+                        <td>{{ ride.price }}</td>
+                        {% if vehicle_type == "Bus" %}
+                            <td>{{ ride.bus_stand }}</td>
+                            <td>{{ ride.seats_available }}</td>
+                        {% elif vehicle_type == "Car" %}
+                            <td>{{ ride.car_type }}</td>
+                        {% endif %}
+                        <td>
+                            <button class="bookNowBtn" data-ride-id="{{ ride.id }}" data-vehicle-type="{{ vehicle_type }}">Book Now</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for Ride Details (hidden initially) -->
+    <div id="rideDetailsModal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+        <div style="background: rgba(255, 255, 255, 0.9); margin: 10% auto; padding: 20px; width: 50%; border-radius: 12px;">
+            <h4>Ride Details</h4>
+            <div id="rideDetails"></div>
+            <button onclick="$('#rideDetailsModal').hide();">Close</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Show the ride details when "Book Now" is clicked
+        $(document).on("click", ".bookNowBtn", function () {
+            var rideId = $(this).data("ride-id");
+            var vehicleType = $(this).data("vehicle-type");
+
+            // Hide the table container
+            $(".table-container").hide();  // This hides the table
+
+            $.ajax({
+                url: "{% url 'ride_details' %}",
+                method: "POST",
+                data: {
+                    ride_id: rideId,
+                    vehicle_type: vehicleType,
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                },
+                success: function (response) {
+                    if (response.html) {
+                        $("#rideDetails").html(response.html);
+                        $("#rideDetailsModal").show();
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while fetching ride details.");
+                },
+            });
+        });
+    </script>
+</body>
+</html>

@@ -66,7 +66,7 @@ p{
     padding: 10px 30px;
     box-shadow: -5px -5px 10px #fff, 5px 5px 10px #9a9ca3;
     border: none;
-    background-color: rgb(3, 120, 147);
+    background-color: rgb(179, 0, 0);
     color: white;
     text-transform: uppercase;
     letter-spacing: .5px;
@@ -78,7 +78,7 @@ p{
 .btns button{
     padding: 10px 15px;
     border: none;
-    background-color: rgb(179, 0, 0);
+    background-color: rgb(3, 120, 147);
     text-transform: uppercase;
     letter-spacing: .5px;
     font-size: 11px;
@@ -116,13 +116,15 @@ main section{
     border: 1px solid white;
     color: black;
 }
-.branching{ /*pic*/
+.branching { /*pic*/
     position: absolute;
-    width:700px;
-    top:-40px;
-    right:-260px;
-
+    width: 580px;
+    top: 30px;
+    right: -140px;
+    filter: sepia(1) saturate(1) hue-rotate(160deg); 
 }
+
+
 
 main section span img{
     width:40px;

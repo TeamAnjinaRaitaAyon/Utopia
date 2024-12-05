@@ -25,7 +25,6 @@ urlpatterns = [
     path('event/<int:event_id>/', views.event_details, name='event_details'),
     
     
-    
     path('Am_I_A_Citizen/',views.Am_I_A_CitizenPage,name='Am_I_A_CitizenPage'),
     path('NewsDetailsPage/<path:news>/',views.NewsDetailsPage, name='NewsDetailsPage'),
     path('AboutPage/',views.AboutPage,name='AboutPage'),
@@ -35,25 +34,14 @@ urlpatterns = [
     path('SportTicket/',views.SportTicket,name='SportTicket'),
     path('TransportationMain/', views.TransportationMain, name='TransportationMain'),
     path('InCity/', views.InCity, name='InCity'),
-    path('CityToCity/', views.CityToCity, name='CityToCity'),
-    path('CountryToCountry/', views.CountryToCountry, name='CountryToCountry'),
-    path('get_locations/', views.get_Location, name='get_locations'),
-    path('get_destination/', views.get_Destination, name='get_destination'),
-    path('get_price/', views.get_Price, name='get_price'),
 
     
-
-
-    
-
     path('HealthcareMain',views.HealthcareMain,name='HealthcareMain'),
     path('get_hospitals/', views.get_hospitals, name='get_hospitals'),
     path('get_doctors/', views.get_doctors, name='get_doctors'),
     path('get_visiting_hours/', views.get_visiting_hours, name='get_visiting_hours'),
     path('VisitingTickets/',views.VisitingTickets,name='VisitingTickets'),
     
-    
-    path('ThankYou', views.ThankYou, name='ThankYou'),
 
 
     #payment
@@ -66,7 +54,26 @@ urlpatterns = [
     path('stripe-webhook/', views.stripe_webhook, name='stripe_webhook'),
     path('<path:undefined_path>/', views.Undefine),
     
-
+    
+    
+    path('get_locations', views.get_locations, name="get_locations"),
+    path('get_destinations', views.get_destinations, name="get_destinations"),
+    path('show_available_rides', views.show_available_rides, name="show_available_rides"),
+    path('ride_details', views.get_ride_details, name="ride_details"),
+    path('book_ride', views.book_ride, name="book_ride"),
+    path('CityToCity', views.CityToCity, name="CityToCity"),
+    path('findcitytransportation', views.findcitytransportation, name="findcitytransportation"),
+    path('citybookings', views.citybookings, name="citybookings"),
+    path('cancellings', views.cancellings, name="cancellings"),
+    path('seebookings', views.seebookings, name="seebookings"),
+    path('CountryToCountry', views.CountryToCountry, name="CountryToCountry"),
+    path('findcountrytransportation', views.findcountrytransportation, name="findcountrytransportation"),
+    path('countrybookings/', views.countrybookings, name="countrybookings"),
+    path('cancellings', views.cancellings, name="cancellings"),
+    path('seecountrybookings', views.seecountrybookings, name="seecountrybookings"),
+    path('education', views.education_view, name='education'),
+    path('thank_you', views.thank_you, name='thank_you'),
+    path('ThankYou', views.ThankYou, name='ThankYou'),
 
 ]
 

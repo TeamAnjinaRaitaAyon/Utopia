@@ -246,3 +246,173 @@ class Neighborhood(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.city.name})"
+    
+
+class Location(models.Model):
+    name = models.CharField(max_length=100)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.name 
+
+class Destination(models.Model):
+    name = models.CharField(max_length=100)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name 
+
+class Ride(models.Model):
+    vehicle_type = models.CharField(max_length=50)  # e.g., Bike, Car, Bus
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
+    departure_time = models.DateTimeField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    car_type = models.CharField(max_length=100, null=True, blank=True)
+    bus_stand = models.CharField(max_length=100, null=True, blank=True)
+    seats_available = models.IntegerField(null=True, blank=True)
+    rider_name = models.CharField(max_length=30) 
+    contact = models.CharField(max_length=12) 
+    booked = models.BooleanField(default=False)  # Status if the ride is booked or not
+
+    def __str__(self):
+        return self.vehicle_type
+
+class Booking(models.Model):
+        user = models.ForeignKey(User, on_delete=models.CASCADE)  # User who made the booking
+        ride = models.ForeignKey(Ride, on_delete=models.CASCADE)  # Ride being booked
+        booking_time = models.DateTimeField(auto_now_add=True)  # Time of booking
+        status_choices = [
+            ('confirmed', 'Confirmed'),
+            ('cancelled', 'Cancelled'),
+            ('pending', 'Pending'),
+        ]
+        status = models.CharField(max_length=10, choices=status_choices, default='pending')  # Booking status
+  
+        def __str__(self):
+           return f"Booking by {self.user.username} for {self.ride.vehicle_type} on {self.booking_time}"
+       
+class CityRide(models.Model):
+    id = models.AutoField(primary_key=True) 
+    cityride_name = models.CharField(max_length=30)  # Name of the ride (Bus, Train, Plane)
+    source = models.CharField(max_length=30)
+    dest = models.CharField(max_length=30)
+    nos = models.DecimalField(decimal_places=0, max_digits=2)  # Number of seats
+    rem = models.DecimalField(decimal_places=0, max_digits=2)  # Number of remaining seats
+    price = models.DecimalField(decimal_places=2, max_digits=6)
+    date = models.DateField()
+    time = models.TimeField()
+    bus_type = models.CharField(max_length=20, blank=True, null=True)  # For bus, private or public
+    double_deck = models.CharField(max_length=10, blank=True, null=True)  # For bus, is it double deck?
+    train_type = models.CharField(max_length=20, blank=True, null=True)  # For train, private or public
+    plane_type = models.CharField(max_length=20, blank=True, null=True)  # For plane, private or public
+
+    def __str__(self):
+        return self.cityride_name
+
+class UserCity(models.Model):
+    user_id = models.AutoField(primary_key=True)
+    email = models.EmailField()
+    name = models.CharField(max_length=30)
+    password = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.email
+
+
+class CityBook(models.Model):
+    BOOKED = 'B'
+    CANCELLED = 'C'
+
+    TICKET_STATUSES = ((BOOKED, 'Booked'),
+                       (CANCELLED, 'Cancelled'),)
+    email = models.EmailField()
+    name = models.CharField(max_length=100)
+    ride_name = models.CharField(max_length=30)
+    source = models.CharField(max_length=30)
+    dest = models.CharField(max_length=30)
+    nos = models.DecimalField(decimal_places=0, max_digits=2)
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    date = models.DateField()
+    time = models.TimeField()
+    status = models.CharField(choices=TICKET_STATUSES,
+                              default=BOOKED, max_length=2)
+
+    def __str__(self):
+        return self.email
+class CountryRide(models.Model):
+        id = models.AutoField(primary_key=True)
+        countryride_name = models.CharField(max_length=30)  
+        source = models.CharField(max_length=30)
+        dest = models.CharField(max_length=30)
+        nos = models.DecimalField(decimal_places=0, max_digits=2)  # Number of seats
+        rem = models.DecimalField(decimal_places=0, max_digits=2)  # Number of remaining seats
+        price = models.DecimalField(decimal_places=2, max_digits=6)
+        date = models.DateField()
+        time = models.TimeField()
+        bus_type = models.CharField(max_length=20, blank=True, null=True)  # For bus, private or public
+        double_deck = models.CharField(max_length=10, blank=True, null=True)  # For bus, is it double deck?
+        train_type = models.CharField(max_length=20, blank=True, null=True)  # For train, private or public
+        plane_type = models.CharField(max_length=20, blank=True, null=True)  # For plane, private or public
+
+        def __str__(self):
+            return self.countryride_name 
+
+class UserCountry(models.Model):
+    user_id = models.AutoField(primary_key=True)
+    email = models.EmailField()
+    name = models.CharField(max_length=30)
+    password = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.email
+
+class CountryBook(models.Model):
+    BOOKED = 'B'
+    CANCELLED = 'C'
+
+    TICKET_STATUSES = ((BOOKED, 'Booked'),
+                       (CANCELLED, 'Cancelled'),)
+    email = models.EmailField()
+    name = models.CharField(max_length=100)
+    ride_name = models.CharField(max_length=30)
+    source = models.CharField(max_length=30)
+    dest = models.CharField(max_length=30)
+    nos = models.DecimalField(decimal_places=0, max_digits=2)
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    date = models.DateField()
+    time = models.TimeField()
+    status = models.CharField(choices=TICKET_STATUSES,
+                              default=BOOKED, max_length=2)
+
+    def __str__(self):
+        return self.email
+
+
+class School(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.TextField()
+    is_private = models.BooleanField(default=False)
+    num_classes = models.IntegerField()
+
+    def __str__(self):
+        return self.name
+
+class College(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.TextField()
+    subjects = models.TextField()
+    is_private = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+class University(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.TextField()
+    num_departments = models.IntegerField()
+    num_rank = models.IntegerField()
+    is_private = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.name

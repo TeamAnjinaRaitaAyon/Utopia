@@ -1,0 +1,146 @@
+{% extends 'BasePage.html' %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+{% block content %}
+<div class="popup-content">
+    <h2>Avaiable Rides</h2>
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>RIDE</th>
+                    <th>RIDE TYPE</th>
+                    <th>ID</th>
+                    <th>SOURCE</th>
+                    <th>DESTINATION</th>
+                    <th>NUM OF SEATS</th>
+                    <th>NUM OF SEATS REM</th>
+                    <th>PRICE</th>
+                    <th>DATE</th>
+                    <th>TIME</th>
+                    <th>ADDITIONAL</th> 
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in countryride_list %}
+                    <tr>
+                        <td>
+                            {% if 'Bus' in row.countryride_name %}
+                                <i class="fas fa-bus" style="font-size: 30px; color: blue;"></i>
+                            {% elif 'Train' in row.countryride_name %}
+                                <i class="fas fa-train" style="font-size: 30px; color: green;"></i>
+                            {% elif 'Plane' in row.countryride_name %}
+                                <i class="fas fa-plane" style="font-size: 30px; color: red;"></i>
+                            {% endif %}
+                        </td>
+                        <td>{{ row.countryride_name }}</td>
+                        <td>{{ row.id }}</td>
+                        <td>{{ row.source }}</td>
+                        <td>{{ row.dest }}</td>
+                        <td>{{ row.nos }}</td>
+                        <td>{{ row.rem }}</td>
+                        <td>{{ row.price }}</td>
+                        <td>{{ row.date }}</td>
+                        <td>{{ row.time }}</td>
+                        <td>
+                            {% if 'Bus' in row.countryride_name %}
+                                {{ row.bus_type }} <!-- Bus type column -->
+                                {% if row.double_deck == 'Yes' %}
+                                    (Double Deck)
+                                {% endif %}
+                            {% elif 'Train' in row.countryride_name %}
+                                {{ row.train_type }} <!-- Train type column -->
+                            {% elif 'Plane' in row.countryride_name %}
+                                {{ row.plane_type }} <!-- Plane type column -->
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Book Ride Form -->
+    <div class="form-container">
+        <form action="{% url 'countrybookings' %}" method="post">
+            <h3>Choose Ride to Book</h3>
+            {% csrf_token %}
+            <div>
+                <label>Ride ID</label>
+                <input name="ride_id" type="number" required>
+            </div>
+            <div>
+                <label>Number of Seats</label>
+                <input name="no_seats" type="number" required>
+            </div>
+            <button type="submit" class="btn btn-success">Book Ride</button>
+            <div class="error">{{ error }}</div>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Center the form on the page */
+    .popup-content {
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    /* Table container styling */
+    .table-container {
+        width: 100%;
+        max-width: 1500px;
+        margin-bottom: 30px;
+    }
+
+    /* Book ride form styling */
+    .form-container {
+        width: 100%;
+        max-width: 400px; /* Limit the width of the form */
+        margin: 30px auto; /* Center it horizontally with space from top */
+        padding: 20px;
+        background: #f0f0f0;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Form Styling */
+    .form-container h3 {
+        text-align: center;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .form-container input {
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin: 10px 0;
+        width: 100%;
+    }
+
+    .form-container button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        transition: background-color 0.3s ease;
+    }
+
+    .form-container button:hover {
+        background-color: #45a049;
+    }
+
+    .error {
+        color: red;
+        margin-top: 10px;
+    }
+</style>
+
+{% endblock %}

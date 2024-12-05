@@ -1,0 +1,78 @@
+/* Form Container with Neumorphism Effect */
+.col-sm-6 {
+    background-color: #ffffff; /* White background */
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.1), 
+                -10px -10px 30px rgba(255, 255, 255, 0.7); /* Neumorphic shadows */
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 150px;
+}
+
+/* Form Heading */
+h2 {
+    color: #1c1b1b; /* Dark gray text */
+    margin-bottom: 20px;
+}
+
+/* Label Styling */
+label {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 5px;  /* Space between label and input */
+    display: block;  /* Ensure label stays above input */
+    text-align: left; /* Align text to the left */
+}
+
+/* Neumorphic Style for Input Fields */
+input.form-control {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    background: #f0f0f0;
+    border: none;
+    font-size: 14px;
+    color: #555;
+    box-shadow: inset 8px 8px 15px rgba(0, 0, 0, 0.1), 
+                inset -8px -8px 15px rgba(255, 255, 255, 0.7); /* Inset shadows */
+    transition: all 0.3s ease;
+}
+
+input.form-control:focus {
+    outline: none;
+    background-color: #ffffff; 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); 
+}
+
+/* Submit Button Style */
+button.btn-success {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), 
+                -5px -5px 15px rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+}
+
+button.btn-success:hover {
+    background-color: #45a049;
+    box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2), 
+                -5px -5px 20px rgba(255, 255, 255, 0.8);
+}
+
+/* Error Message Styling */
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* Align Submit Button Right */
+.pull-right {
+    margin-top: 10px;
+}

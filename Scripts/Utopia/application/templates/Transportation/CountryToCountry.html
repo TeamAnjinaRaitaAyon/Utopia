@@ -1,182 +1,35 @@
 {% extends "BasePage.html" %}
 {% load static %}
-{% block title %} Healthcare {% endblock %}
+{% block title %}TRANSPORTATION{% endblock %}
 {% block more-style %}
-<link rel="stylesheet" href="{% static '/CSS/HealthcareMain.css' %}" />
+<link rel="stylesheet" href="{% static 'CSS/CityToCity.css' %}">
 {% endblock %}
-
 {% block content %}
-<div class="main">
-  <div class="contents">
-    <div class="container popup" id="PopupHealthcare">
-      <form action="" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="content">
-          <!-- Health Issue Dropdown populated with data from database -->
-          <div class="input-box">
-            <label for="HealthIssue">Select Health Issue</label>
-            <select name="HealthIssue" id="HealthIssue">
-              <option selected>Choose an issue</option>
-              {% for issue in health_issues %}
-                <option value="{{ issue.id }}">{{ issue.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
+<div class="body">
+        <div class="row">
+            <div class="col-sm-6 mx-auto" style="margin-top: 70px">
+                <form action="{% url 'findcountrytransportation' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <label for="example-email-input">Your Country</label>
+                      <input name="source" class="form-control" type="text" id="example-email-input" placeholder="Type your country here">
+                    </div>
+                    <div class="form-group">
+                      <label for="destination-country">Destination Country</label>
+                      <input name="destination" class="form-control" type="text" id="destination-country" placeholder="Type your destination country here">
+                    </div>
+                    <div class="form-group">
+                      <label for="date">Date</label>
+                      <input name="date" class="form-control" type="date" id="date" placeholder="mm/dd/yyyy">
+                    </div>
+                    <div class="pull-right">
+                      <button type="submit" class="btn btn-success">Find</button>
+                    </div>
+                                      
+                    {{error}}
 
-          <!-- Hospital Type -->
-          <div class="input-box">
-            <label for="HospitalType">Select Hospital Type</label>
-            <select name="HospitalType" id="HospitalType">
-              <option selected>Choose hospital type</option>
-              <option value="Public">Public</option>
-              <option value="Private">Private</option>
-            </select>
-          </div>
-
-          <!-- Hospital -->
-          <div class="input-box">
-            <label for="Hospital">Select Hospital</label>
-            <select name="Hospital" id="Hospital">
-              <option selected>Choose a hospital</option>
-            </select>
-          </div>
-
-          <!-- Doctor -->
-          <div class="input-box">
-            <label for="Doctor">Select Doctor</label>
-            <select name="Doctor" id="Doctor">
-              <option selected>Choose a doctor</option>
-            </select>
-          </div>
-
-          <!-- Visiting Hour -->
-          <div class="input-box">
-            <label for="VisitingHour">Select Visiting Hour</label>
-            <select name="VisitingHour" id="VisitingHour">
-              <option selected>Choose an hour</option>
-            </select>
-          </div>
+                </form>
+            </div>
         </div>
-
-        <div class="button-container">
-          <button type="submit" name="save" value="confirm">
-            Book Appointment
-          </button>
-        </div>
-      </form>
     </div>
-  </div>
-</div>
-
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-  integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"></script>
-
-<script>
-  $(document).ready(function() {
-    // Trigger when HealthIssue is selected
-    $('#HealthIssue').change(function() {
-      var healthIssue = $(this).val();
-      var hospitalType = $('#HospitalType').val();
-
-      // Fetch hospitals based on Health Issue and Hospital Type
-      $.ajax({
-        url: '{% url "get_hospitals" %}',
-        data: {
-          'health_issue': healthIssue,
-          'hospital_type': hospitalType
-        },
-        success: function(response) {
-          $('#Hospital').empty();
-          $('#Hospital').append('<option selected>Choose a hospital</option>');
-          response.hospitals.forEach(function(hospital) {
-            $('#Hospital').append('<option value="' + hospital.id + '">' + hospital.name + '</option>');
-          });
-        }
-      });
-    });
-
-    // Trigger when HospitalType is selected
-    $('#HospitalType').change(function() {
-      var hospitalType = $(this).val();
-      var healthIssue = $('#HealthIssue').val();
-
-      // Fetch hospitals based on Hospital Type
-      $.ajax({
-        url: '{% url "get_hospitals" %}',
-        data: {
-          'health_issue': healthIssue,
-          'hospital_type': hospitalType
-        },
-        success: function(response) {
-          $('#Hospital').empty();
-          $('#Hospital').append('<option selected>Choose a hospital</option>');
-          response.hospitals.forEach(function(hospital) {
-            $('#Hospital').append('<option value="' + hospital.id + '">' + hospital.name + '</option>');
-          });
-        }
-      });
-    });
-
-    // Trigger when Hospital is selected
-    $('#Hospital').change(function() {
-      var hospitalId = $(this).val();
-      var healthIssue = $('#HealthIssue').val();
-
-      // Fetch doctors based on selected hospital
-      $.ajax({
-        url: '{% url "get_doctors" %}',
-        data: {
-          'health_issue':healthIssue,
-          'hospital': hospitalId
-        },
-        success: function(response) {
-          $('#Doctor').empty();
-          $('#Doctor').append('<option selected>Choose a doctor</option>');
-          response.doctors.forEach(function(doctor) {
-            $('#Doctor').append('<option value="' + doctor.id + '">' + doctor.name + '</option>');
-          });
-        }
-      });
-    });
-
-    // Trigger when Doctor is selected
-    $('#Doctor').change(function() {
-      var doctorId = $(this).val();
-
-      // Fetch visiting hours for the selected doctor
-      $.ajax({
-        url: '{% url "get_visiting_hours" %}',
-        data: {
-          'doctor': doctorId
-        },
-        success: function(response) {
-          $('#VisitingHour').empty();
-          $('#VisitingHour').append('<option selected>Choose an hour</option>');
-          response.visiting_hours.forEach(function(hour) {
-            $('#VisitingHour').append('<option value="' + hour + '">' + hour + '</option>');
-          });
-        }
-      });
-    });
-
-    // Form submission check for empty fields
-    $('form').submit(function(event) {
-      // Check if any field is empty
-      var healthIssue = $('#HealthIssue').val();
-      var hospitalType = $('#HospitalType').val();
-      var hospital = $('#Hospital').val();
-      var doctor = $('#Doctor').val();
-      var visitingHour = $('#VisitingHour').val();
-
-      if (!healthIssue || !hospitalType || !hospital || !doctor || !visitingHour) {
-        event.preventDefault();  // Prevent form submission
-        alert('Please fill all the fields');
-      }
-    });
-  });
-</script>
-
 {% endblock %}

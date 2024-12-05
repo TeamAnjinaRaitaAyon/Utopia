@@ -3,24 +3,145 @@
 {% block title %}EDUCATION{% endblock %}
 {% block more-style %}
 <link rel="stylesheet" href="{% static 'CSS/EducationHome.css' %}">
-<link rel="stylesheet" href="{% static 'JAVASCRIPT/Education.js/EducationHome.js' %}">
 {% endblock %}
 {% block content %}
 <div class="main">
-        <div class="contents">
-          <li><a href="{% url 'College' %}" class="College">Collage</a></li>
-          <li><a href="{% url 'Honours' %}" class="Honours">University</a></li>
+    <div class="contents">
+        <li><a href="#" class="School" onclick="showInfo('schools')">School</a></li>
+        <li><a href="#" class="College" onclick="showInfo('colleges')">College</a></li>
+        <li><a href="#" class="University" onclick="showInfo('universities')">University</a></li>
+    </div>
+
+    <!-- Popup Modal for showing details -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Select a School</h2>
+            <div id="modal-body">
+                <!-- School details will appear here -->
+            </div>
         </div>
-    
-        <div class="button">
-          <a href="{% url 'Form' %}" class="Form">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            Apply Now
-          </a>
-        </div>
+    </div>
 </div>
+
+<!-- Javascript to load data dynamically -->
+<script>
+    // Sample data (you can replace this with data from Django context)
+    const data = {
+        schools: {{ schools|safe }},
+        colleges: {{ colleges|safe }},
+        universities: {{ universities|safe }}
+    };
+
+    // Function to show info based on category
+    function showInfo(category) {
+        const modal = document.getElementById('info-modal');
+        const modalBody = document.getElementById('modal-body');
+        const modalTitle = document.getElementById('modal-title');
+
+        // Clear previous content
+        modalBody.innerHTML = '';
+
+        // Show the modal
+        modal.style.display = 'block';
+        modalTitle.innerText = `Select a ${category.charAt(0).toUpperCase() + category.slice(1, -1)}`; // Capitalize first letter
+
+        // Populate modal with names
+        data[category].forEach(item => {
+            const div = document.createElement('div');
+            div.classList.add('info-item');
+            div.innerHTML = `
+                <button class="info-item-btn" onclick="showDetails('${category}', ${item.id})">${item.name}</button>
+            `;
+            modalBody.appendChild(div);
+        });
+    }
+
+    // Function to show details of the selected item
+    function showDetails(category, id) {
+        const selectedItem = data[category].find(item => item.id == id);
+        const modalBody = document.getElementById('modal-body');
+        
+        // Populate modal with selected item's details
+        modalBody.innerHTML = `
+            <h3>${selectedItem.name}</h3>
+            <p><strong>Address:</strong> ${selectedItem.address}</p>
+            ${selectedItem.is_private !== undefined ? `<p><strong>Private:</strong> ${selectedItem.is_private ? 'Yes' : 'No'}</p>` : ''}
+            ${selectedItem.num_classes !== undefined ? `<p><strong>Classes:</strong> ${selectedItem.num_classes}</p>` : ''}
+            ${selectedItem.num_departments !== undefined ? `<p><strong>Departments:</strong> ${selectedItem.num_departments}</p>` : ''}
+            ${selectedItem.num_rank !== undefined ? `<p><strong>Rank:</strong> ${selectedItem.num_rank}</p>` : ''}
+        `;
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        document.getElementById('info-modal').style.display = 'none';
+    }
+
+    // Close the modal if the user clicks outside of the modal content
+    window.onclick = function(event) {
+        if (event.target === document.getElementById('info-modal')) {
+            closeModal();
+        }
+    };
+</script>
+
 {% endblock %}
-  
+
+<!-- Add CSS Styles here -->
+{% block more-style %}
+<style>
+    /* Basic modal styling */
+    .modal {
+        display: none; 
+        position: fixed;
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); 
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+    }
+
+    .close-btn {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        float: right;
+    }
+
+    .close-btn:hover,
+    .close-btn:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .info-item {
+        margin: 10px 0;
+    }
+
+    .info-item-btn {
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .info-item-btn:hover {
+        background-color: #45a049;
+    }
+</style>
+{% endblock %}
