@@ -1,0 +1,134 @@
+{% extends 'BasePage.html' %}
+
+{% block title %}Admission{% endblock %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+    /* Center the form and style it */
+    #admission_form {
+        background: #ffffff; /* White background */
+        padding: 30px; /* Add padding */
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        width: 400px; /* Fixed width */
+        margin: 50px auto; /* Center horizontally with some vertical margin */
+    }
+
+    h1 {
+        text-align: center;
+        color: #333; /* Darker text for contrast */
+    }
+
+    .form-group {
+        margin-bottom: 15px; /* Space between fields */
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background: green;
+        color: greenyellow;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #0056b3; /* Darker blue on hover */
+    }
+
+    .success-message {
+        text-align: center;
+        color: green;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+</style>
+
+<form method="post" id="admission_form">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_institution_type">Institution Type</label>
+        {{ form.institution_type }}
+    </div>
+    
+    <div class="form-group">
+        <label for="id_institution_name">Institution Name</label>
+        {{ form.institution_name }}
+    </div>
+
+    <div class="form-group">
+        <label for="id_class_subject_department">Class/Subject/Department</label>
+        {{ form.class_subject_department }}
+    </div>
+
+    <div class="form-group">
+        <label for="id_student_name">Student Name</label>
+        {{ form.student_name }}
+    </div>
+
+    <button type="submit">Submit</button>
+</form>
+
+{% if success_message %}
+    <div class="success-message">
+        <p>{{ success_message }}</p>
+    </div>
+{% endif %}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        console.log("AJAX script loaded."); 
+    
+        // Trigger AJAX request on Institution Type change
+        $('#id_institution_type').change(function () {
+            var institution_type_id = $(this).val();
+            console.log("Selected institution_type_id:", institution_type_id);
+    
+            // AJAX request to fetch related data
+            $.ajax({
+                url: "{% url 'Admissionn' %}", 
+                data: {
+                    'institution_type_id': institution_type_id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log("AJAX success response:", data); 
+    
+                    // Populate Institution Name dropdown
+                    var institution_name_select = $('#id_institution_name');
+                    institution_name_select.empty();
+                    institution_name_select.append('<option value="">Select Institution Name</option>');
+                    $.each(data.institutions, function (index, institution) {
+                        institution_name_select.append('<option value="' + institution.id + '">' + institution.name + '</option>');
+                    });
+    
+                    // Populate Class/Subject/Department dropdown
+                    var class_subject_department_select = $('#id_class_subject_department');
+                    class_subject_department_select.empty();
+                    class_subject_department_select.append('<option value="">Select Class/Subject/Department</option>');
+                    $.each(data.class_subject_department, function (index, class_subject) {
+                        class_subject_department_select.append('<option value="' + class_subject.id + '">' + class_subject.name + '</option>');
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX error:", error); // Debug log
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
