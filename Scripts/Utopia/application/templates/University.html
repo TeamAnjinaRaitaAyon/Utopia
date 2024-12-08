@@ -1,0 +1,56 @@
+{% extends "BasePage.html" %}
+{% block title %}University Information{% endblock %}
+{% block more-style %}
+<link rel="stylesheet" href="{% static 'CSS/EducationHome.css' %}">
+{% endblock %}
+{% block content %}
+<div class="university-list">
+    <h2>Universities</h2>
+    {% for university in universities %}
+        <div class="info-item">
+            <button class="info-item-btn" onclick="showDetails('{{ university.id }}')">{{ university.name }}</button>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Popup Modal for showing university details -->
+<div id="info-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2 id="modal-title">University Details</h2>
+        <div id="modal-body"></div>
+    </div>
+</div>
+
+<script>
+// Fetch university details from Django context
+const universitiesData = {{ universities|safe }};
+
+// Function to show details for a selected university
+function showDetails(universityId) {
+    const university = universitiesData.find(item => item.id == universityId);
+    const modalBody = document.getElementById('modal-body');
+
+    modalBody.innerHTML = `
+        <h3>${university.name}</h3>
+        <p><strong>Address:</strong> ${university.address}</p>
+        <p><strong>Private:</strong> ${university.is_private ? 'Yes' : 'No'}</p>
+        <p><strong>Classes:</strong> ${university.num_classes}</p>
+        <p><strong>Departments:</strong> ${university.num_departments}</p>
+    `;
+
+    document.getElementById('info-modal').style.display = 'block';
+}
+
+// Close modal function
+function closeModal() {
+    document.getElementById('info-modal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    if (event.target === document.getElementById('info-modal')) {
+        closeModal();
+    }
+};
+</script>
+{% endblock %}

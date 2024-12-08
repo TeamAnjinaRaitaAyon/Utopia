@@ -158,6 +158,7 @@ def VotingPage(request):
     ss = 00000000
     vc1 = 1
     vc2 = 1
+    
     for vote in voting:
         vote.ElectionStatus = False
         vote.save()
@@ -383,8 +384,6 @@ def get_Price(request):
 def EducationPage(request):
     return render(request, 'EducationPage.html')
 
-
-
 def success(request):
     return render(request, 'Education/success.html')
 
@@ -409,6 +408,7 @@ import json
 
 # Set up Stripe API key
 stripe.api_key = settings.STRIPE_TEST_API_KEY
+
 @login_required
 def event_details(request, event_id):
     event = get_object_or_404(SportsEvent, pk=event_id)
@@ -511,8 +511,6 @@ def payment_success(request):
     return render(request, 'success.html')
 
 
-
-
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
@@ -540,7 +538,6 @@ def stripe_webhook(request):
 from django.shortcuts import render, get_object_or_404
 from .models import Ticket
 
-@login_required
 def VisitingTickets(request):
     ticket_id = request.GET.get('ticket_id')
     if request.method == 'POST':
@@ -764,7 +761,7 @@ def Am_I_A_CitizenPage(request):
     return render(request, 'Am-I-A-CitizenPage.html', context)
 
 
-@login_required
+@login_required(login_url='EntryPage')
 def NewsDetailsPage(request, news):
     response = requests.get(news)
     html_content = response.content
@@ -1119,21 +1116,96 @@ def seecountrybookings(request):
     else:
         context["error"] = "Sorry, you have no booked rides."
         return render(request, 'Transportation/CountryToCountry.html', context)
-    
-def education_view(request):
-    schools = list(School.objects.values())
-    colleges = list(College.objects.values())
-    universities = list(University.objects.values())
-    
-    context = {
-        'schools': schools,
-        'colleges': colleges,
-        'universities': universities
-    }
-    return render(request, 'EducationPage.html', context)
+
+def fetch_institutions(request, category):
+    if category == 'school':
+        institutions = School.objects.all().values('name', 'city', 'address', 'type')
+    elif category == 'college':
+        institutions = College.objects.all().values('name', 'city', 'address', 'avaiable_subject')
+    elif category == 'university':
+        institutions = University.objects.all().values('name', 'city', 'address', 'departments_count')
+    else:
+        institutions = []
+        
+    return JsonResponse(list(institutions), safe=False)
+
+
+def Admissionn(request):
+    form = AdmissionForm()
+
+    # Handle AJAX requests for fetching related data
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == "GET":
+        institution_type_id = request.GET.get('institution_type_id')
+
+        if institution_type_id:
+            try:
+                institution_type = InstitutionType.objects.get(id=institution_type_id)
+
+                # Fetch data based on institution type
+                if institution_type.name == 'School':
+                    institutions = School.objects.all()
+                    classes = SchoolClass.objects.all()
+                elif institution_type.name == 'College':
+                    institutions = College.objects.all()
+                    classes = CollegeSubject.objects.all()
+                elif institution_type.name == 'University':
+                    institutions = University.objects.all()
+                    classes = UniversityDepartment.objects.all()
+                else:
+                    institutions, classes = [], []
+
+                # Convert data to JSON format
+                if institution_type.name == 'School':
+                    institution_data = [{"id": inst.id, "name": inst.name} for inst in institutions]
+                    class_data = [{"id": cls.id, "name": cls.class_name} for cls in classes]  # School-specific class names
+
+
+                elif institution_type.name == 'College':
+                    institution_data = [{"id": inst.id, "name": inst.name} for inst in institutions]
+                    class_data = [{"id": cls.id, "name": cls.subject_name} for cls in classes]  # College-specific subject names
+                
+                elif institution_type.name == 'University':
+                    institution_data = [{"id": inst.id, "name": inst.name} for inst in institutions]
+                    class_data = [{"id": cls.id, "name": cls.department_name} for cls in classes]  # University-specific department names
+                
+                # Return JSON response
+                return JsonResponse({
+                    "institutions": institution_data,
+                    "class_subject_department": class_data
+                })
+
+            except InstitutionType.DoesNotExist:
+                return JsonResponse({"error": "Invalid Institution Type"}, status=400)
+
+        return JsonResponse({"error": "Missing institution_type_id"}, status=400)
+
+    # Handle form submission (POST request)
+    if request.method == 'POST':
+        form = AdmissionForm(request.POST)
+        if form.is_valid():
+            institution_type = form.cleaned_data['institution_type']
+            institution_name = form.cleaned_data['institution_name']
+            class_subject_department = form.cleaned_data['class_subject_department']
+            student_name = form.cleaned_data['student_name']
+
+            admission = Admission.objects.create(
+                institution_type=institution_type,
+                institution_name=institution_name,
+                class_subject_department=class_subject_department,
+                student_name=student_name
+            )
+
+            return redirect('thank_you')  
+
+    # Render the form for GET request
+    return render(request, 'Admission.html', {'form': form})
+
 
 def ThankYou(request):
     return render(request, 'Healthcare/ThankYou.html')
 
 def thank_you(request):
     return render(request, 'Thankyou.html')
+
+def Thank(request):
+    return render(request, 'Thank.html') 

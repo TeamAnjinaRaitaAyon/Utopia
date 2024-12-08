@@ -1,147 +1,340 @@
-{% extends "BasePage.html" %}
-{% load static %}
-{% block title %}EDUCATION{% endblock %}
-{% block more-style %}
-<link rel="stylesheet" href="{% static 'CSS/EducationHome.css' %}">
-{% endblock %}
-{% block content %}
-<div class="main">
-    <div class="contents">
-        <li><a href="#" class="School" onclick="showInfo('schools')">School</a></li>
-        <li><a href="#" class="College" onclick="showInfo('colleges')">College</a></li>
-        <li><a href="#" class="University" onclick="showInfo('universities')">University</a></li>
-    </div>
+{% extends 'BasePage.html' %}
 
-    <!-- Popup Modal for showing details -->
-    <div id="info-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2 id="modal-title">Select a School</h2>
-            <div id="modal-body">
-                <!-- School details will appear here -->
-            </div>
-        </div>
-    </div>
+{% block title %}Education Portal{% endblock %}
+
+{% block content %}
+<div class="top-buttons">
+    <button class="school" onclick="loadData('school')" tabindex="0">
+        <i class="fas fa-school"></i> Schools
+    </button>
+    <button class="college" onclick="loadData('college')" tabindex="0">
+        <i class="fas fa-university"></i> Colleges
+    </button>
+    <button class="university" onclick="loadData('university')" tabindex="0">
+        <i class="fas fa-graduation-cap"></i> Universities
+    </button>
+</div>
+<div class="center-button">
+    <a class="admission-form-button" href="{% url 'Admissionn' %}">ADMISSION FORM</a>
 </div>
 
-<!-- Javascript to load data dynamically -->
+<div id="info-container">
+    <!-- Dynamic content will appear here -->
+</div>
+
 <script>
-    // Sample data (you can replace this with data from Django context)
-    const data = {
-        schools: {{ schools|safe }},
-        colleges: {{ colleges|safe }},
-        universities: {{ universities|safe }}
-    };
+    let currentCategory = '';
 
-    // Function to show info based on category
-    function showInfo(category) {
-        const modal = document.getElementById('info-modal');
-        const modalBody = document.getElementById('modal-body');
-        const modalTitle = document.getElementById('modal-title');
+    function loadData(category) {
+        currentCategory = category;
 
-        // Clear previous content
-        modalBody.innerHTML = '';
+        const container = document.getElementById('info-container');
+        const admissionButton = document.querySelector('.center-button');
+        admissionButton.style.display = 'none'; // Hide Admission button
 
-        // Show the modal
-        modal.style.display = 'block';
-        modalTitle.innerText = `Select a ${category.charAt(0).toUpperCase() + category.slice(1, -1)}`; // Capitalize first letter
+        container.innerHTML = '<p>Loading...</p>'; // Show loading indicator
 
-        // Populate modal with names
-        data[category].forEach(item => {
-            const div = document.createElement('div');
-            div.classList.add('info-item');
-            div.innerHTML = `
-                <button class="info-item-btn" onclick="showDetails('${category}', ${item.id})">${item.name}</button>
-            `;
-            modalBody.appendChild(div);
-        });
+        fetch(`/fetch/${category}/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                container.innerHTML = ''; // Clear previous content
+
+                // "More Visit" Button for School, College, University
+                const moreVisitButton = document.createElement('button');
+                moreVisitButton.className = 'more-visit';
+
+                // Set the text and URL for the "More Visit" button based on category
+                if (category === 'school') {
+                    moreVisitButton.textContent = '👉Government Site';
+                    moreVisitButton.onclick = () => window.location.href = 'https://gsateletalk.com/';
+                } else if (category === 'college') {
+                    moreVisitButton.textContent = '👉Government Site';
+                    moreVisitButton.onclick = () => window.location.href = 'https://xiclassadmissiongovbd.com/#google_vignette';
+                } else if (category === 'university') {
+                    moreVisitButton.textContent = '👉Government Site';
+                    moreVisitButton.onclick = () => window.location.href = 'https://universityadmissionbd.com/';
+                }
+
+                container.appendChild(moreVisitButton);
+
+                if (data.length === 0) {
+                    container.innerHTML += '<p>No data available for this category.</p>';
+                    return;
+                }
+
+                // Data Grid
+                const grid = document.createElement('div');
+                grid.className = 'grid';
+
+                data.forEach(item => {
+                    const gridItem = document.createElement('div');
+                    gridItem.className = 'grid-item';
+
+                    const button = document.createElement('button');
+                    button.className = 'grid-button';
+                    button.textContent = item.name;
+                    button.onclick = () => showDetails(item);
+                    gridItem.appendChild(button);
+
+                    grid.appendChild(gridItem);
+                });
+
+                container.appendChild(grid);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                container.innerHTML = '<p>An error occurred while fetching data. Please try again later.</p>';
+            });
     }
 
-    // Function to show details of the selected item
-    function showDetails(category, id) {
-        const selectedItem = data[category].find(item => item.id == id);
-        const modalBody = document.getElementById('modal-body');
-        
-        // Populate modal with selected item's details
-        modalBody.innerHTML = `
-            <h3>${selectedItem.name}</h3>
-            <p><strong>Address:</strong> ${selectedItem.address}</p>
-            ${selectedItem.is_private !== undefined ? `<p><strong>Private:</strong> ${selectedItem.is_private ? 'Yes' : 'No'}</p>` : ''}
-            ${selectedItem.num_classes !== undefined ? `<p><strong>Classes:</strong> ${selectedItem.num_classes}</p>` : ''}
-            ${selectedItem.num_departments !== undefined ? `<p><strong>Departments:</strong> ${selectedItem.num_departments}</p>` : ''}
-            ${selectedItem.num_rank !== undefined ? `<p><strong>Rank:</strong> ${selectedItem.num_rank}</p>` : ''}
-        `;
-    }
+    function showDetails(item) {
+        const container = document.getElementById('info-container');
+        const admissionButton = document.querySelector('.center-button');
+        container.innerHTML = ''; // Clear grid
+        admissionButton.style.display = 'none'; // Hide Admission button
 
-    // Function to close the modal
-    function closeModal() {
-        document.getElementById('info-modal').style.display = 'none';
-    }
-
-    // Close the modal if the user clicks outside of the modal content
-    window.onclick = function(event) {
-        if (event.target === document.getElementById('info-modal')) {
-            closeModal();
+        let details = '';
+        if (currentCategory === 'school') {
+            details = `<p>City: ${item.city}</p>
+                       <p>Address: ${item.address}</p>
+                       <p>Type: ${item.type}</p>
+                      `;
+        } else if (currentCategory === 'college') {
+            details = `<p>City: ${item.city}</p>
+                       <p>Address: ${item.address}</p>
+                       <p>Available Subjects: ${item.available_subject}</p>
+                       `;
+        } else if (currentCategory === 'university') {
+            details = `<p>City: ${item.city}</p>
+                       <p>Address: ${item.address}</p>
+                       <p>Departments Count: ${item.departments_count}</p>`;
         }
-    };
+
+        container.innerHTML = `<div class="details">
+            <h3>${item.name}</h3>
+            ${details}
+           <button class="back-to-list-button" onclick="loadData('${currentCategory}')">Back to List</button>
+        </div>`;
+    }
+
 </script>
 
-{% endblock %}
-
-<!-- Add CSS Styles here -->
-{% block more-style %}
 <style>
-    /* Basic modal styling */
-    .modal {
-        display: none; 
-        position: fixed;
-        z-index: 1; 
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); 
-        padding-top: 60px;
-    }
+    
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensures the body takes the full height of the viewport */
+            margin: 0;
+        }
+    
+        .top-buttons {
+            margin: 60px auto;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }  
+    
 
-    .modal-content {
-        background-color: #fefefe;
-        margin: 5% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 600px;
-    }
-
-    .close-btn {
-        color: #aaa;
-        font-size: 28px;
-        font-weight: bold;
-        float: right;
-    }
-
-    .close-btn:hover,
-    .close-btn:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .info-item {
-        margin: 10px 0;
-    }
-
-    .info-item-btn {
-        padding: 10px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        cursor: pointer;
-        width: 100%;
-    }
-
-    .info-item-btn:hover {
-        background-color: #45a049;
-    }
+        button {
+            background:#e0e0e5;
+            height: 230px;
+            width: 400px;
+            border-radius: 20px;
+            box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.2), 
+            -6px -6px 12px rgba(255, 255, 255, 0.9);
+            border: none;
+            color: #333;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+    
+        button:focus {
+            outline: 2px solid #007BFF;
+        }
+    
+        button i {
+            font-size: 50px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+    
+        button:hover {
+            box-shadow: inset -5px -5px 10px #ffffff, inset 5px 5px 10px #babecc;
+            transform: scale(1.05);
+        }
+        .more-visit {
+            background: white;
+            border-radius: 10px;
+            box-shadow: inset 2px 2px 12px white, inset -2px -2px 15px black;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 70px;
+            width: 200px;
+            height: 50px;
+            text-align: center;
+            position: absolute; /* Make the button positionable */
+            left: 20px; /* Align it to the left of the page */
+            top: 400px; 
+        }
+        
+    
+        .more-visit:hover {
+            transform: scale(1.05);
+        }
+        #info-container {
+            flex-grow: 1; /* Makes this container take available space */
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            flex-direction: column;
+        }
+    
+        footer {
+            width: 100%;
+            background: #eee;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #f7f7f7;
+            box-shadow: -7px -7px 17px rgba(7, 70, 70, 0.15), 7px 7px 17px #fff;
+            z-index: 999;
+            margin-top: auto; /* Keeps the footer at the bottom */
+        }
+    
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            padding: 40px;
+            border-radius: 10px;
+            width: 800px;
+            margin-bottom: 150px;
+        }
+    
+        .grid-item:hover {
+            transform: scale(1.05);
+        }
+            .grid-button {
+                background: #ffffff; /* Light background for a clean look */
+                box-shadow: 
+                    inset 6px 6px 10px rgba(0, 0, 0, 0.1),  /* Inner shadow for depth */
+                    inset -6px -6px 10px rgba(255, 255, 255, 0.5),  /* Light inner shadow */
+                    6px 6px 10px rgba(0, 0, 0, 0.1),  /* Outer shadow for raised effect */
+                    -6px -6px 10px rgba(255, 255, 255, 0.5);  /* Light outer shadow */
+                font-size: 18px; /* Legible text size */
+                cursor: pointer; /* Pointer cursor for interactivity */
+                margin-top: 20px;
+                width: 300px;
+                height: 100px;
+                text-align: center; /* Centered text */
+                border: none; /* No borders for a smooth edge */
+                border-radius: 12px; /* Soft rounded corners */
+                padding: 20px; /* Padding to make the button content fit nicely */
+                transition: all 0.3s ease; /* Smooth transition effect */
+            }
+            
+            .grid-button:hover {
+                box-shadow: 
+                    inset 6px 6px 10px rgba(0, 0, 0, 0.1),
+                    inset -6px -6px 10px rgba(255, 255, 255, 0.5),
+                    6px 6px 15px rgba(0, 0, 0, 0.2), /* Deeper outer shadow on hover */
+                    -6px -6px 15px rgba(255, 255, 255, 0.6); /* Lighter outer shadow */
+                transform: scale(1.05); /* Slightly enlarge the button on hover */
+            }
+            
+            .grid-button:active {
+                box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1), inset -2px -2px 5px rgba(255, 255, 255, 0.5); /* Pressed-in effect */
+                transform: scale(0.98); /* Slightly shrink the button when clicked */
+            }
+          
+        .details {
+            background: white;
+            color: black; /* Text color */
+            width: 500px; /* Width of the box */
+            height: 280px; /* Height of the box */
+            border-radius: 10px; /* Optional: Add rounded corners */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Add a shadow for depth */
+            text-align: center; /* Center text inside the box */
+            padding: 10px; /* Optional: Add padding inside the box */
+            font-size: 15px;
+            margin-bottom: 60px;
+        
+        }
+        .details button {
+            background: #e0e0e5; 
+            width:100px;
+            height: 40px;
+            border-radius: 10px; 
+            color: #333; 
+            font-size: 15px; 
+            font-weight: bold; /* Bold text for emphasis */
+            border: none; /* Remove default border */
+            cursor: pointer; /* Pointer cursor on hover */
+            margin-top: 40px; /* Space above the button */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth effects */
+        }
+        
+        .center-button {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            margin-top: 30px;
+            margin-bottom: 200px;
+            flex-direction: column; /* Stack content if adding other elements */
+        }
+        
+        .admission-form-button {
+            background: linear-gradient(185deg, #d1d1d1, #333333); /* Gradient between black and white */
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            cursor: pointer;
+            height: 80px;
+            width:250px;
+            box-shadow: -3px -3px 10px rgba(255, 255, 255, 0.8), 3px 3px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: pulse-neutral 1s infinite;
+        }
+        
+        /* Pulse animation */
+        @keyframes pulse-neutral {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(209, 209, 209, 0.8), 0 0 10px rgba(51, 51, 51, 0.8);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 15px rgba(209, 209, 209, 1), 0 0 15px rgba(51, 51, 51, 1);
+            }
+        }
+        
+        .admission-form-button:hover {
+            background: linear-gradient(135deg, #333333, #d1d1d1); /* Reverse gradient on hover */
+            animation: none; /* Stops animation on hover for focus */
+        }
 </style>
 {% endblock %}

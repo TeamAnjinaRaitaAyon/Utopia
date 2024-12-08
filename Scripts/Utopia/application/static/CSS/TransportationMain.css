@@ -31,7 +31,7 @@
     font-size: 30px;
     font-weight: 800;
     cursor: pointer;
-    color: rgba(3, 6, 77, 0.916);
+    color: #333;
     width: 100%;
     margin: 10px;
     border-radius: 20px;
@@ -47,6 +47,7 @@
 .box i {
     font-size: 40px; /* Icon size */
     margin-bottom: 10px; /* Space between icon and text */
+    color: #333;
 }
 
 /* Paragraph styling */

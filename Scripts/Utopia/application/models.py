@@ -387,32 +387,71 @@ class CountryBook(models.Model):
 
     def __str__(self):
         return self.email
-
-
-class School(models.Model):
-    name = models.CharField(max_length=255)
-    address = models.TextField()
-    is_private = models.BooleanField(default=False)
-    num_classes = models.IntegerField()
+    
+class InstitutionType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
-class College(models.Model):
-    name = models.CharField(max_length=255)
+class School(models.Model):
+    name = models.CharField(max_length=100)
+    city = models.TextField()
     address = models.TextField()
-    subjects = models.TextField()
-    is_private = models.BooleanField(default=False)
+    type = models.CharField(max_length=10)
+    institution_type = models.ForeignKey(InstitutionType, related_name="schools", on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.name
+
+class College(models.Model):
+    name = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    address = models.TextField()
+    avaiable_subject = models.CharField(max_length=100)
+    institution_type = models.ForeignKey(InstitutionType, related_name="colleges", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
 class University(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
     address = models.TextField()
-    num_departments = models.IntegerField()
-    num_rank = models.IntegerField()
-    is_private = models.BooleanField(default=False)
-    
+    departments_count = models.IntegerField()
+    institution_type = models.ForeignKey(InstitutionType, related_name="universities", on_delete=models.CASCADE)
+
     def __str__(self):
         return self.name
+
+class SchoolClass(models.Model):
+    school = models.ForeignKey(School, related_name="classes", on_delete=models.CASCADE)
+    class_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.class_name
+
+
+class CollegeSubject(models.Model):
+    college = models.ForeignKey(College, related_name="subjects", on_delete=models.CASCADE)
+    subject_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.subject_name
+
+
+class UniversityDepartment(models.Model):
+    university = models.ForeignKey(University, related_name="departments", on_delete=models.CASCADE)
+    department_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.department_name
+
+class Admission(models.Model):
+    institution_type = models.ForeignKey(InstitutionType, on_delete=models.CASCADE)
+    institution_name = models.ForeignKey(School, on_delete=models.CASCADE)  # or College or University based on your case
+    class_subject_department = models.ForeignKey(SchoolClass, on_delete=models.CASCADE)  # or relevant class/subject model
+    student_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.student_name

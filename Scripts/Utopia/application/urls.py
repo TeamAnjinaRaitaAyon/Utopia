@@ -18,8 +18,9 @@ urlpatterns = [
     path('MinistryPage/',views.MinistryPage,name='MinistryPage'),
     path('MinistySetupPage/',views.MinistrySetupPage,name='MinistrySetupPage'),
 
-    path('EducationPage',views.EducationPage,name='EducationPage'),
-    
+    path('EducationPage/',views.EducationPage,name='EducationPage'),
+    path('fetch/<str:category>/', views.fetch_institutions, name='fetch_institutions'),
+
     
     path('EntertainmentPage/',views.EntertainmentPage,name='EntertainmentPage'),
     path('event/<int:event_id>/', views.event_details, name='event_details'),
@@ -71,9 +72,13 @@ urlpatterns = [
     path('countrybookings/', views.countrybookings, name="countrybookings"),
     path('cancellings', views.cancellings, name="cancellings"),
     path('seecountrybookings', views.seecountrybookings, name="seecountrybookings"),
-    path('education', views.education_view, name='education'),
+    
+  
+    path('Admissionn', views.Admissionn, name='Admissionn'),
+   
     path('thank_you', views.thank_you, name='thank_you'),
     path('ThankYou', views.ThankYou, name='ThankYou'),
+    path('Thank', views.Thank, name='Thank'),
 
 ]
 
